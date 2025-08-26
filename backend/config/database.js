@@ -3,7 +3,10 @@ const dotenv = require('dotenv');
 
 dotenv.config();
 
-const sequelize = new Sequelize(process.env.DATABASE_URL, {
+// Use a fallback database URL for development if not provided
+const databaseUrl = process.env.DATABASE_URL || 'postgresql://localhost:5432/saram_dev';
+
+const sequelize = new Sequelize(databaseUrl, {
   dialect: 'postgres',
   logging: false,
   dialectOptions: {
@@ -26,6 +29,7 @@ const testConnection = async () => {
     console.log('Database connection established successfully');
   } catch (error) {
     console.error('Unable to connect to the database:', error);
+    console.log('Continuing without database connection for development...');
   }
 };
 
