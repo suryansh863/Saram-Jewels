@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { Link, useLocation } from 'react-router-dom';
 import { 
   Squares2X2Icon, 
   ListBulletIcon,
@@ -10,12 +10,25 @@ import {
   EyeIcon,
   SparklesIcon
 } from '@heroicons/react/24/outline';
+import { useCart } from '../context/CartContext';
 
 const ProductList = () => {
   const [viewMode, setViewMode] = useState('grid');
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [priceRange, setPriceRange] = useState('all');
   const [sortBy, setSortBy] = useState('featured');
+  const [searchQuery, setSearchQuery] = useState('');
+  const { addToCart, addToWishlist, isInCart, isInWishlist } = useCart();
+  const location = useLocation();
+
+  // Get search query from URL on component mount
+  useEffect(() => {
+    const urlParams = new URLSearchParams(location.search);
+    const searchParam = urlParams.get('search');
+    if (searchParam) {
+      setSearchQuery(searchParam);
+    }
+  }, [location.search]);
 
   // Sample products data
   const products = [
@@ -48,16 +61,16 @@ const ProductList = () => {
     },
     {
       id: 3,
-      name: 'Elegant Band Ring',
-      description: 'Simple yet elegant American Diamond band ring.',
-      price: 299,
-      originalPrice: 399,
+      name: 'Elegant American Diamond Ring',
+      description: 'This stunning ring features a brilliant American Diamond center stone surrounded by smaller accent stones.',
+      price: 899,
+      originalPrice: 1299,
       category: 'rings',
-      images: ['/images/ring3.jpg'],
-      rating: 4.4,
-      reviews: 67,
-      isFeatured: false,
-      stock: 20
+      images: ['https://images.unsplash.com/photo-1605100804763-247f67b3557e?w=600&h=600&fit=crop'],
+      rating: 4.8,
+      reviews: 127,
+      isFeatured: true,
+      stock: 12
     },
     // Necklaces
     {
@@ -96,73 +109,85 @@ const ProductList = () => {
       category: 'earrings',
       images: ['/images/earrings1.jpg'],
       rating: 4.5,
-      reviews: 203,
+      reviews: 78,
       isFeatured: false,
       stock: 25
     },
     {
       id: 7,
-      name: 'Drop Earrings',
-      description: 'Elegant drop earrings with cascading American Diamond stones.',
-      price: 799,
-      originalPrice: 999,
+      name: 'Diamond Stud Earrings',
+      description: 'Beautiful diamond stud earrings perfect for everyday wear.',
+      price: 599,
+      originalPrice: 799,
       category: 'earrings',
-      images: ['/images/earrings2.jpg'],
-      rating: 4.8,
-      reviews: 134,
+      images: ['https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?w=300&h=300&fit=crop'],
+      rating: 4.7,
+      reviews: 95,
       isFeatured: true,
-      stock: 12
+      stock: 18
     },
-    // Gift Box Sets
+    // Bracelets
     {
       id: 8,
-      name: 'Gift Box Set - Necklace & Earrings',
-      description: 'Perfect combination of necklace and earrings in a beautiful gift box.',
-      price: 1000,
-      originalPrice: 1500,
-      category: 'gift-box-set',
-      images: ['/images/gift-box1.jpg'],
+      name: 'Bracelet Collection',
+      description: 'Elegant bracelet with beautiful stone work.',
+      price: 799,
+      originalPrice: 999,
+      category: 'bracelets',
+      images: ['https://images.unsplash.com/photo-1602751584552-8ba73aad10e1?w=300&h=300&fit=crop'],
+      rating: 4.6,
+      reviews: 67,
+      isFeatured: false,
+      stock: 14
+    },
+    {
+      id: 9,
+      name: 'Necklace Set',
+      description: 'Beautiful necklace set with pendant.',
+      price: 1299,
+      originalPrice: 1599,
+      category: 'necklace',
+      images: ['https://images.unsplash.com/photo-1599643478518-a784e5dc4c8f?w=300&h=300&fit=crop'],
       rating: 4.9,
-      reviews: 89,
+      reviews: 112,
       isFeatured: true,
-      stock: 6
+      stock: 9
+    },
+    {
+      id: 10,
+      name: 'Pendant Necklace',
+      description: 'Elegant pendant necklace with diamond accents.',
+      price: 699,
+      originalPrice: 899,
+      category: 'necklace',
+      images: ['https://images.unsplash.com/photo-1605100804763-247f67b3557e?w=300&h=300&fit=crop'],
+      rating: 4.8,
+      reviews: 89,
+      isFeatured: false,
+      stock: 16
     }
   ];
 
-  const categories = [
-    { id: 'all', name: 'All Products' },
-    { id: 'rings', name: 'Rings' },
-    { id: 'necklace', name: 'Necklaces' },
-    { id: 'earrings', name: 'Earrings' },
-    { id: 'chains', name: 'Chains' },
-    { id: 'bracelets', name: 'Bracelets' },
-    { id: 'necklace-set', name: 'Necklace Sets' },
-    { id: 'gift-box-set', name: 'Gift Box Sets' }
-  ];
-
-  const priceRanges = [
-    { id: 'all', name: 'All Prices' },
-    { id: '0-500', name: 'Under ₹500' },
-    { id: '500-1000', name: '₹500 - ₹1000' },
-    { id: '1000-2000', name: '₹1000 - ₹2000' },
-    { id: '2000+', name: 'Above ₹2000' }
-  ];
-
-  // Filter products
+  // Filter products based on search query, category, and price range
   const filteredProducts = products.filter(product => {
-    const categoryMatch = selectedCategory === 'all' || product.category === selectedCategory;
+    const matchesSearch = searchQuery === '' || 
+      product.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      product.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      product.category.toLowerCase().includes(searchQuery.toLowerCase());
     
-    let priceMatch = true;
+    const matchesCategory = selectedCategory === 'all' || product.category === selectedCategory;
+    
+    let matchesPrice = true;
     if (priceRange !== 'all') {
       const [min, max] = priceRange.split('-').map(Number);
-      if (priceRange === '2000+') {
-        priceMatch = product.price >= 2000;
+      if (max) {
+        matchesPrice = product.price >= min && product.price <= max;
       } else {
-        priceMatch = product.price >= min && product.price <= max;
+        matchesPrice = product.price >= min;
       }
     }
     
-    return categoryMatch && priceMatch;
+    return matchesSearch && matchesCategory && matchesPrice;
   });
 
   // Sort products
@@ -181,306 +206,287 @@ const ProductList = () => {
     }
   });
 
-  const ProductCard = ({ product }) => (
-    <div className="group relative bg-white rounded-xl shadow-card hover:shadow-jewelry transition-all duration-300 card-hover overflow-hidden">
-      {/* Featured Badge */}
-      {product.isFeatured && (
-        <div className="absolute top-3 left-3 z-10">
-          <span className="bg-gradient-to-r from-pink-500 to-purple-600 text-white px-2 py-1 rounded-full text-xs font-semibold">
-            Featured
-          </span>
-        </div>
-      )}
+  const handleAddToCart = (product) => {
+    addToCart({ ...product, quantity: 1 });
+    
+    // Show success message
+    const event = new CustomEvent('showNotification', {
+      detail: {
+        message: `${product.name} added to cart!`,
+        type: 'success'
+      }
+    });
+    window.dispatchEvent(event);
+  };
 
-      {/* Product Image */}
-      <div className="aspect-square bg-gradient-to-br from-pink-100 to-purple-100 relative overflow-hidden">
-        <div className="w-full h-full flex items-center justify-center">
-          <div className="text-center p-6">
-            <div className="w-20 h-20 bg-gradient-to-r from-pink-500 to-purple-600 rounded-full flex items-center justify-center mx-auto mb-4">
-              <SparklesIcon className="h-10 w-10 text-white" />
-            </div>
-            <p className="text-gray-600 text-sm">Product Image</p>
-          </div>
-        </div>
-        
-        {/* Quick Actions */}
-        <div className="absolute top-3 right-3 flex flex-col gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-          <button className="w-8 h-8 bg-white rounded-full flex items-center justify-center shadow-md hover:bg-pink-50 transition-colors">
-            <HeartIcon className="h-4 w-4 text-gray-600" />
-          </button>
-          <button className="w-8 h-8 bg-white rounded-full flex items-center justify-center shadow-md hover:bg-pink-50 transition-colors">
-            <EyeIcon className="h-4 w-4 text-gray-600" />
-          </button>
-        </div>
-      </div>
+  const handleWishlistToggle = (product) => {
+    if (isInWishlist(product.id)) {
+      // Remove from wishlist logic would go here
+      const event = new CustomEvent('showNotification', {
+        detail: {
+          message: `${product.name} removed from wishlist`,
+          type: 'info'
+        }
+      });
+      window.dispatchEvent(event);
+    } else {
+      addToWishlist(product);
+      const event = new CustomEvent('showNotification', {
+        detail: {
+          message: `${product.name} added to wishlist!`,
+          type: 'success'
+        }
+      });
+      window.dispatchEvent(event);
+    }
+  };
 
-      {/* Product Info */}
-      <div className="p-4">
-        <div className="flex items-start justify-between mb-2">
-          <h3 className="font-semibold text-gray-800 group-hover:text-pink-600 transition-colors line-clamp-1">
-            {product.name}
-          </h3>
-        </div>
-        
-        <p className="text-gray-600 text-sm mb-3 line-clamp-2">
-          {product.description}
-        </p>
-        
-        {/* Rating */}
-        <div className="flex items-center mb-3">
-          <div className="flex items-center">
-            {[...Array(5)].map((_, i) => (
-              <StarIcon
-                key={i}
-                className={`h-4 w-4 ${
-                  i < Math.floor(product.rating)
-                    ? 'text-yellow-400 fill-current'
-                    : 'text-gray-300'
-                }`}
-              />
-            ))}
-          </div>
-          <span className="text-sm text-gray-500 ml-2">
-            ({product.reviews})
-          </span>
-        </div>
-        
-        {/* Price */}
-        <div className="flex items-center justify-between mb-4">
-          <div>
-            <span className="text-lg font-bold text-pink-600">
-              ₹{product.price}
-            </span>
-            {product.originalPrice > product.price && (
-              <span className="text-sm text-gray-500 line-through ml-2">
-                ₹{product.originalPrice}
-              </span>
-            )}
-          </div>
-          <span className="text-xs text-gray-500">
-            {product.stock} left
-          </span>
-        </div>
-        
-        {/* Actions */}
-        <div className="flex gap-2">
-          <Link
-            to={`/products/${product.id}`}
-            className="flex-1 bg-pink-500 text-white text-center py-2 px-4 rounded-lg hover:bg-pink-600 transition-colors text-sm font-medium"
-          >
-            View Details
-          </Link>
-          <button className="w-10 h-10 bg-gray-100 rounded-lg flex items-center justify-center hover:bg-pink-100 transition-colors">
-            <ShoppingCartIcon className="h-5 w-5 text-gray-600" />
-          </button>
-        </div>
-      </div>
-    </div>
-  );
+  const categories = [
+    { id: 'all', name: 'All Categories' },
+    { id: 'rings', name: 'Rings' },
+    { id: 'necklace', name: 'Necklaces' },
+    { id: 'earrings', name: 'Earrings' },
+    { id: 'bracelets', name: 'Bracelets' }
+  ];
 
-  const ProductListItem = ({ product }) => (
-    <div className="flex bg-white rounded-xl shadow-card hover:shadow-jewelry transition-all duration-300 p-4">
-      {/* Product Image */}
-      <div className="w-24 h-24 bg-gradient-to-br from-pink-100 to-purple-100 rounded-lg flex items-center justify-center flex-shrink-0">
-        <SparklesIcon className="h-8 w-8 text-pink-500" />
-      </div>
-      
-      {/* Product Info */}
-      <div className="flex-1 ml-4">
-        <div className="flex items-start justify-between">
-          <div>
-            <h3 className="font-semibold text-gray-800 hover:text-pink-600 transition-colors">
-              {product.name}
-            </h3>
-            <p className="text-gray-600 text-sm mt-1 line-clamp-2">
-              {product.description}
-            </p>
-          </div>
-          <div className="text-right">
-            <span className="text-lg font-bold text-pink-600">
-              ₹{product.price}
-            </span>
-            {product.originalPrice > product.price && (
-              <div className="text-sm text-gray-500 line-through">
-                ₹{product.originalPrice}
-              </div>
-            )}
-          </div>
-        </div>
-        
-        <div className="flex items-center justify-between mt-3">
-          <div className="flex items-center">
-            <div className="flex items-center">
-              {[...Array(5)].map((_, i) => (
-                <StarIcon
-                  key={i}
-                  className={`h-4 w-4 ${
-                    i < Math.floor(product.rating)
-                      ? 'text-yellow-400 fill-current'
-                      : 'text-gray-300'
-                  }`}
-                />
-              ))}
-            </div>
-            <span className="text-sm text-gray-500 ml-2">
-              ({product.reviews})
-            </span>
-          </div>
-          
-          <div className="flex gap-2">
-            <Link
-              to={`/products/${product.id}`}
-              className="bg-pink-500 text-white px-4 py-2 rounded-lg hover:bg-pink-600 transition-colors text-sm font-medium"
-            >
-              View Details
-            </Link>
-            <button className="w-8 h-8 bg-gray-100 rounded-lg flex items-center justify-center hover:bg-pink-100 transition-colors">
-              <ShoppingCartIcon className="h-4 w-4 text-gray-600" />
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
+  const priceRanges = [
+    { id: 'all', name: 'All Prices' },
+    { id: '0-500', name: 'Under ₹500' },
+    { id: '500-1000', name: '₹500 - ₹1000' },
+    { id: '1000-2000', name: '₹1000 - ₹2000' },
+    { id: '2000-', name: 'Above ₹2000' }
+  ];
+
+  const sortOptions = [
+    { id: 'featured', name: 'Featured' },
+    { id: 'price-low', name: 'Price: Low to High' },
+    { id: 'price-high', name: 'Price: High to Low' },
+    { id: 'rating', name: 'Highest Rated' },
+    { id: 'newest', name: 'Newest First' }
+  ];
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <div className="bg-white border-b">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          <h1 className="text-3xl md:text-4xl font-jewelry font-bold text-gray-800 mb-2">
-            All Products
+    <div className="min-h-screen bg-gray-50 py-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        {/* Header */}
+        <div className="mb-8">
+          <h1 className="text-3xl font-jewelry font-bold text-gray-900 mb-2">
+            {searchQuery ? `Search Results for "${searchQuery}"` : 'All Products'}
           </h1>
           <p className="text-gray-600">
-            Discover our complete collection of American Diamond jewelry
+            {searchQuery 
+              ? `Found ${sortedProducts.length} products matching your search`
+              : 'Discover our beautiful collection of jewelry'
+            }
           </p>
         </div>
-      </div>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Filters and Controls */}
-        <div className="bg-white rounded-xl shadow-card p-6 mb-8">
-          <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+        {/* Filters and Search */}
+        <div className="bg-white rounded-lg shadow-sm p-6 mb-8">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
             {/* Search */}
-            <div className="relative flex-1 max-w-md">
+            <div className="relative">
               <MagnifyingGlassIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
               <input
                 type="text"
                 placeholder="Search products..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
                 className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent"
               />
             </div>
 
-            {/* Filters */}
-            <div className="flex flex-wrap gap-4">
-              {/* Category Filter */}
-              <select
-                value={selectedCategory}
-                onChange={(e) => setSelectedCategory(e.target.value)}
-                className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent"
-              >
-                {categories.map(category => (
-                  <option key={category.id} value={category.id}>
-                    {category.name}
-                  </option>
-                ))}
-              </select>
+            {/* Category Filter */}
+            <select
+              value={selectedCategory}
+              onChange={(e) => setSelectedCategory(e.target.value)}
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent"
+            >
+              {categories.map(category => (
+                <option key={category.id} value={category.id}>
+                  {category.name}
+                </option>
+              ))}
+            </select>
 
-              {/* Price Range Filter */}
-              <select
-                value={priceRange}
-                onChange={(e) => setPriceRange(e.target.value)}
-                className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent"
-              >
-                {priceRanges.map(range => (
-                  <option key={range.id} value={range.id}>
-                    {range.name}
-                  </option>
-                ))}
-              </select>
+            {/* Price Range Filter */}
+            <select
+              value={priceRange}
+              onChange={(e) => setPriceRange(e.target.value)}
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent"
+            >
+              {priceRanges.map(range => (
+                <option key={range.id} value={range.id}>
+                  {range.name}
+                </option>
+              ))}
+            </select>
 
-              {/* Sort By */}
-              <select
-                value={sortBy}
-                onChange={(e) => setSortBy(e.target.value)}
-                className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent"
-              >
-                <option value="featured">Featured</option>
-                <option value="price-low">Price: Low to High</option>
-                <option value="price-high">Price: High to Low</option>
-                <option value="rating">Highest Rated</option>
-                <option value="newest">Newest</option>
-              </select>
-
-              {/* View Mode Toggle */}
-              <div className="flex border border-gray-300 rounded-lg overflow-hidden">
-                <button
-                  onClick={() => setViewMode('grid')}
-                  className={`p-2 ${
-                    viewMode === 'grid'
-                      ? 'bg-pink-500 text-white'
-                      : 'bg-white text-gray-600 hover:bg-gray-50'
-                  } transition-colors`}
-                >
-                  <Squares2X2Icon className="h-5 w-5" />
-                </button>
-                <button
-                  onClick={() => setViewMode('list')}
-                  className={`p-2 ${
-                    viewMode === 'list'
-                      ? 'bg-pink-500 text-white'
-                      : 'bg-white text-gray-600 hover:bg-gray-50'
-                  } transition-colors`}
-                >
-                  <ListBulletIcon className="h-5 w-5" />
-                </button>
-              </div>
-            </div>
+            {/* Sort */}
+            <select
+              value={sortBy}
+              onChange={(e) => setSortBy(e.target.value)}
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent"
+            >
+              {sortOptions.map(option => (
+                <option key={option.id} value={option.id}>
+                  {option.name}
+                </option>
+              ))}
+            </select>
           </div>
         </div>
 
-        {/* Results Count */}
+        {/* View Mode Toggle */}
         <div className="flex items-center justify-between mb-6">
-          <p className="text-gray-600">
+          <div className="flex items-center space-x-2">
+            <button
+              onClick={() => setViewMode('grid')}
+              className={`p-2 rounded-lg transition-colors ${
+                viewMode === 'grid'
+                  ? 'bg-pink-100 text-pink-600'
+                  : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+              }`}
+            >
+              <Squares2X2Icon className="h-5 w-5" />
+            </button>
+            <button
+              onClick={() => setViewMode('list')}
+              className={`p-2 rounded-lg transition-colors ${
+                viewMode === 'list'
+                  ? 'bg-pink-100 text-pink-600'
+                  : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+              }`}
+            >
+              <ListBulletIcon className="h-5 w-5" />
+            </button>
+          </div>
+          
+          <p className="text-sm text-gray-600">
             Showing {sortedProducts.length} of {products.length} products
           </p>
         </div>
 
-        {/* Products Grid/List */}
-        {viewMode === 'grid' ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            {sortedProducts.map((product) => (
-              <ProductCard key={product.id} product={product} />
-            ))}
+        {/* Products Grid */}
+        {sortedProducts.length === 0 ? (
+          <div className="text-center py-12">
+            <MagnifyingGlassIcon className="mx-auto h-12 w-12 text-gray-400" />
+            <h3 className="mt-2 text-sm font-medium text-gray-900">No products found</h3>
+            <p className="mt-1 text-sm text-gray-500">
+              {searchQuery 
+                ? `No products match your search for "${searchQuery}". Try adjusting your filters.`
+                : 'No products available in this category.'
+              }
+            </p>
+            {searchQuery && (
+              <button
+                onClick={() => setSearchQuery('')}
+                className="mt-4 inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-pink-600 bg-pink-100 hover:bg-pink-200"
+              >
+                Clear Search
+              </button>
+            )}
           </div>
         ) : (
-          <div className="space-y-4">
+          <div className={`grid gap-6 ${
+            viewMode === 'grid' 
+              ? 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4' 
+              : 'grid-cols-1'
+          }`}>
             {sortedProducts.map((product) => (
-              <ProductListItem key={product.id} product={product} />
-            ))}
-          </div>
-        )}
+              <div
+                key={product.id}
+                className={`bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition-all duration-300 hover:-translate-y-1 ${
+                  viewMode === 'list' ? 'flex' : ''
+                }`}
+              >
+                {/* Product Image */}
+                <div className={`overflow-hidden ${
+                  viewMode === 'list' ? 'w-48 h-48' : 'aspect-square'
+                }`}>
+                  <img
+                    src={product.images[0]}
+                    alt={product.name}
+                    className="w-full h-full object-cover transition-transform duration-300 hover:scale-110"
+                  />
+                </div>
 
-        {/* Empty State */}
-        {sortedProducts.length === 0 && (
-          <div className="text-center py-12">
-            <SparklesIcon className="h-16 w-16 text-gray-400 mx-auto mb-4" />
-            <h3 className="text-lg font-semibold text-gray-800 mb-2">
-              No products found
-            </h3>
-            <p className="text-gray-600 mb-4">
-              Try adjusting your filters or search terms
-            </p>
-            <button
-              onClick={() => {
-                setSelectedCategory('all');
-                setPriceRange('all');
-                setSortBy('featured');
-              }}
-              className="btn-primary"
-            >
-              Clear Filters
-            </button>
+                {/* Product Info */}
+                <div className={`p-4 ${viewMode === 'list' ? 'flex-1' : ''}`}>
+                  <div className="flex items-start justify-between mb-2">
+                    <h3 className="font-semibold text-gray-800 group-hover:text-pink-600 transition-colors">
+                      {product.name}
+                    </h3>
+                    <button
+                      onClick={() => handleWishlistToggle(product)}
+                      className={`p-1 rounded-full transition-colors ${
+                        isInWishlist(product.id)
+                          ? 'text-red-500 bg-red-50'
+                          : 'text-gray-400 hover:text-red-500 hover:bg-red-50'
+                      }`}
+                    >
+                      <HeartIcon className="h-5 w-5" />
+                    </button>
+                  </div>
+
+                  <p className="text-sm text-gray-600 mb-3 line-clamp-2">
+                    {product.description}
+                  </p>
+
+                  <div className="flex items-center mb-3">
+                    <div className="flex items-center">
+                      {[...Array(5)].map((_, i) => (
+                        <StarIcon
+                          key={i}
+                          className={`h-4 w-4 ${
+                            i < Math.floor(product.rating) ? 'text-yellow-400 fill-current' : 'text-gray-300'
+                          }`}
+                        />
+                      ))}
+                    </div>
+                    <span className="text-sm text-gray-600 ml-2">
+                      {product.rating} ({product.reviews})
+                    </span>
+                  </div>
+
+                  <div className="flex items-center justify-between mb-4">
+                    <div>
+                      <span className="text-lg font-bold text-gray-800">
+                        ₹{product.price}
+                      </span>
+                      {product.originalPrice > product.price && (
+                        <span className="text-sm text-gray-400 line-through ml-2">
+                          ₹{product.originalPrice}
+                        </span>
+                      )}
+                    </div>
+                    {product.isFeatured && (
+                      <span className="bg-pink-100 text-pink-800 px-2 py-1 rounded text-xs font-medium flex items-center">
+                        <SparklesIcon className="h-3 w-3 mr-1" />
+                        Featured
+                      </span>
+                    )}
+                  </div>
+
+                  <div className="flex space-x-2">
+                    <Link
+                      to={`/products/${product.id}`}
+                      className="flex-1 inline-flex items-center justify-center px-3 py-2 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors"
+                    >
+                      <EyeIcon className="h-4 w-4 mr-1" />
+                      View
+                    </Link>
+                    <button
+                      onClick={() => handleAddToCart(product)}
+                      className="flex-1 inline-flex items-center justify-center px-3 py-2 bg-pink-600 text-white rounded-lg text-sm font-medium hover:bg-pink-700 transition-colors"
+                    >
+                      <ShoppingCartIcon className="h-4 w-4 mr-1" />
+                      Add to Cart
+                    </button>
+                  </div>
+                </div>
+              </div>
+            ))}
           </div>
         )}
       </div>

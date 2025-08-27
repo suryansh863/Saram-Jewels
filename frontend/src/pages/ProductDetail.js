@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { useParams, Link, useNavigate } from 'react-router-dom';
 import { 
   StarIcon,
   HeartIcon,
@@ -12,18 +12,22 @@ import {
   EyeIcon,
   ChatBubbleLeftRightIcon
 } from '@heroicons/react/24/outline';
-import { StarIcon as StarIconSolid } from '@heroicons/react/24/solid';
+import { StarIcon as StarIconSolid, HeartIcon as HeartIconSolid } from '@heroicons/react/24/solid';
+import { useCart } from '../context/CartContext';
 
 const ProductDetail = () => {
   const { id } = useParams();
+  const navigate = useNavigate();
+  const { addToCart, addToWishlist, removeFromWishlist, isInCart, isInWishlist } = useCart();
   const [selectedImage, setSelectedImage] = useState(0);
   const [quantity, setQuantity] = useState(1);
-  const [isWishlisted, setIsWishlisted] = useState(false);
   const [showZoom, setShowZoom] = useState(false);
+  const [isWishlisted, setIsWishlisted] = useState(false);
+  const [showShareMenu, setShowShareMenu] = useState(false);
 
   // Mock product data - in real app this would come from API
   const product = {
-    id: id,
+    id: parseInt(id),
     name: "Elegant American Diamond Ring",
     description: "This stunning ring features a brilliant American Diamond center stone surrounded by smaller accent stones. The anti-tarnish finish ensures it stays beautiful for years. Perfect for everyday wear or special occasions.",
     price: 899,
@@ -105,6 +109,11 @@ const ProductDetail = () => {
     }
   ];
 
+  // Check if product is in wishlist on component mount
+  useEffect(() => {
+    setIsWishlisted(isInWishlist(product.id));
+  }, [product.id, isInWishlist]);
+
   const handleQuantityChange = (newQuantity) => {
     if (newQuantity >= 1 && newQuantity <= 10) {
       setQuantity(newQuantity);
@@ -112,27 +121,102 @@ const ProductDetail = () => {
   };
 
   const handleAddToCart = () => {
-    // Add to cart logic here
-    alert(`Added ${quantity} ${product.name} to cart!`);
+    const productWithQuantity = {
+      ...product,
+      quantity: quantity
+    };
+    addToCart(productWithQuantity);
+    
+    // Show success message
+    const event = new CustomEvent('showNotification', {
+      detail: {
+        message: `${quantity} ${product.name} added to cart!`,
+        type: 'success'
+      }
+    });
+    window.dispatchEvent(event);
   };
 
   const handleBuyNow = () => {
-    // Buy now logic here
-    alert('Proceeding to checkout...');
+    // Add to cart first
+    const productWithQuantity = {
+      ...product,
+      quantity: quantity
+    };
+    addToCart(productWithQuantity);
+    
+    // Navigate to cart
+    navigate('/cart');
+  };
+
+  const handleWishlistToggle = () => {
+    if (isWishlisted) {
+      removeFromWishlist(product.id);
+      setIsWishlisted(false);
+      
+      // Show notification
+      const event = new CustomEvent('showNotification', {
+        detail: {
+          message: `${product.name} removed from wishlist`,
+          type: 'info'
+        }
+      });
+      window.dispatchEvent(event);
+    } else {
+      addToWishlist(product);
+      setIsWishlisted(true);
+      
+      // Show notification
+      const event = new CustomEvent('showNotification', {
+        detail: {
+          message: `${product.name} added to wishlist!`,
+          type: 'success'
+        }
+      });
+      window.dispatchEvent(event);
+    }
   };
 
   const handleShare = () => {
-    if (navigator.share) {
-      navigator.share({
-        title: product.name,
-        text: `Check out this beautiful ${product.name} from Saram Jewelry!`,
-        url: window.location.href
-      });
-    } else {
-      // Fallback: copy to clipboard
-      navigator.clipboard.writeText(window.location.href);
-      alert('Link copied to clipboard!');
+    setShowShareMenu(!showShareMenu);
+  };
+
+  const shareToSocialMedia = (platform) => {
+    const url = window.location.href;
+    const text = `Check out this beautiful ${product.name} from Saram Jewelry!`;
+    
+    let shareUrl = '';
+    
+    switch (platform) {
+      case 'whatsapp':
+        shareUrl = `https://wa.me/?text=${encodeURIComponent(text + ' ' + url)}`;
+        break;
+      case 'facebook':
+        shareUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`;
+        break;
+      case 'twitter':
+        shareUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}`;
+        break;
+      case 'copy':
+        navigator.clipboard.writeText(url);
+        const event = new CustomEvent('showNotification', {
+          detail: {
+            message: 'Link copied to clipboard!',
+            type: 'success'
+          }
+        });
+        window.dispatchEvent(event);
+        setShowShareMenu(false);
+        return;
+      default:
+        break;
     }
+    
+    if (shareUrl) {
+      window.open(shareUrl, '_blank', 'width=600,height=400');
+    }
+    
+    setShowShareMenu(false);
   };
 
   const renderStars = (rating) => {
@@ -239,23 +323,62 @@ const ProductDetail = () => {
             <div>
               <div className="flex items-center justify-between mb-2">
                 <span className="text-sm text-gray-500">{product.category}</span>
-                <div className="flex items-center space-x-2">
+                <div className="flex items-center space-x-2 relative">
                   <button
-                    onClick={() => setIsWishlisted(!isWishlisted)}
+                    onClick={handleWishlistToggle}
                     className={`p-2 rounded-full transition-colors ${
                       isWishlisted
                         ? 'text-red-500 bg-red-50'
                         : 'text-gray-400 hover:text-red-500 hover:bg-red-50'
                     }`}
+                    title={isWishlisted ? 'Remove from wishlist' : 'Add to wishlist'}
                   >
-                    <HeartIcon className="h-5 w-5" />
+                    {isWishlisted ? (
+                      <HeartIconSolid className="h-5 w-5" />
+                    ) : (
+                      <HeartIcon className="h-5 w-5" />
+                    )}
                   </button>
-                  <button
-                    onClick={handleShare}
-                    className="p-2 rounded-full text-gray-400 hover:text-pink-500 hover:bg-pink-50 transition-colors"
-                  >
-                    <ShareIcon className="h-5 w-5" />
-                  </button>
+                  <div className="relative">
+                    <button
+                      onClick={handleShare}
+                      className="p-2 rounded-full text-gray-400 hover:text-pink-500 hover:bg-pink-50 transition-colors"
+                      title="Share product"
+                    >
+                      <ShareIcon className="h-5 w-5" />
+                    </button>
+                    
+                    {/* Share Menu */}
+                    {showShareMenu && (
+                      <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-50 border border-gray-200">
+                        <button
+                          onClick={() => shareToSocialMedia('whatsapp')}
+                          className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
+                        >
+                          Share on WhatsApp
+                        </button>
+                        <button
+                          onClick={() => shareToSocialMedia('facebook')}
+                          className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
+                        >
+                          Share on Facebook
+                        </button>
+                        <button
+                          onClick={() => shareToSocialMedia('twitter')}
+                          className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
+                        >
+                          Share on Twitter
+                        </button>
+                        <div className="border-t border-gray-200 my-1"></div>
+                        <button
+                          onClick={() => shareToSocialMedia('copy')}
+                          className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
+                        >
+                          Copy Link
+                        </button>
+                      </div>
+                    )}
+                  </div>
                 </div>
               </div>
 
@@ -330,10 +453,14 @@ const ProductDetail = () => {
               <div className="flex flex-col sm:flex-row gap-4">
                 <button
                   onClick={handleAddToCart}
-                  className="flex-1 btn-primary inline-flex items-center justify-center py-3"
+                  className={`flex-1 inline-flex items-center justify-center py-3 px-6 rounded-lg font-semibold transition-all duration-200 ${
+                    isInCart(product.id)
+                      ? 'bg-green-600 text-white hover:bg-green-700'
+                      : 'bg-gradient-to-r from-pink-600 to-purple-600 text-white hover:from-pink-700 hover:to-purple-700'
+                  }`}
                 >
                   <ShoppingCartIcon className="h-5 w-5 mr-2" />
-                  Add to Cart
+                  {isInCart(product.id) ? 'Added to Cart' : 'Add to Cart'}
                 </button>
                 <button
                   onClick={handleBuyNow}

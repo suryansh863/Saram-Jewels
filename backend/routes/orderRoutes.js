@@ -5,11 +5,17 @@ const orderController = require('../controllers/orderController');
 // Create new order
 router.post('/create', orderController.createOrder);
 
+// Process payment
+router.post('/process-payment', orderController.processPayment);
+
+// Get payment methods
+router.get('/payment-methods', orderController.getPaymentMethods);
+
 // Get user's orders
 router.get('/:userId', orderController.getUserOrders);
 
-// Get single order by ID
-router.get('/details/:id', orderController.getOrderById);
+// Get single order
+router.get('/order/:id', orderController.getOrderById);
 
 // Update order status (admin only)
 router.put('/:id/status', orderController.updateOrderStatus);

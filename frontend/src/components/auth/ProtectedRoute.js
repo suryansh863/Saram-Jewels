@@ -1,16 +1,11 @@
 import React from 'react';
 import { Navigate } from 'react-router-dom';
-import { useAuth } from '../../hooks/useAuth';
+import { useAuth } from '../../context/AuthContext';
 
 const ProtectedRoute = ({ children }) => {
-  const { isSignedIn, isLoaded, isClerkConfigured } = useAuth();
+  const { isSignedIn, isLoaded } = useAuth();
 
-  // If Clerk is not configured, allow access
-  if (!isClerkConfigured) {
-    return children;
-  }
-
-  // Show loading while Clerk is loading
+  // Show loading while auth is loading
   if (!isLoaded) {
     return (
       <div className="flex items-center justify-center min-h-screen">

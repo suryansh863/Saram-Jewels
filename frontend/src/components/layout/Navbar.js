@@ -1,21 +1,27 @@
 import React, { useState } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { 
   ShoppingCartIcon, 
   UserIcon, 
   Bars3Icon, 
   XMarkIcon,
   HeartIcon,
-  MagnifyingGlassIcon
+  MagnifyingGlassIcon,
+  ChevronDownIcon
 } from '@heroicons/react/24/outline';
 import Logo from '../ui/Logo';
-import { useAuth } from '../../hooks/useAuth';
+import { useAuth } from '../../context/AuthContext';
+import { useCart } from '../../context/CartContext';
 
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const [isProfileDropdownOpen, setIsProfileDropdownOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
   const location = useLocation();
-  const { isSignedIn, user, isLoaded } = useAuth();
+  const navigate = useNavigate();
+  const { isSignedIn, user, isLoaded, logout } = useAuth();
+  const { getCartCount, getWishlistCount } = useCart();
 
   const navigation = [
     { name: 'Home', href: '/' },
@@ -25,6 +31,32 @@ const Navbar = () => {
   ];
 
   const isActive = (path) => location.pathname === path;
+
+  const handleSearch = (e) => {
+    e.preventDefault();
+    if (searchQuery.trim()) {
+      navigate(`/products?search=${encodeURIComponent(searchQuery.trim())}`);
+      setSearchQuery('');
+      setIsSearchOpen(false);
+    }
+  };
+
+  const handleSearchInputChange = (e) => {
+    setSearchQuery(e.target.value);
+  };
+
+  const handleSearchToggle = () => {
+    setIsSearchOpen(!isSearchOpen);
+    if (!isSearchOpen) {
+      // Focus on search input when opening
+      setTimeout(() => {
+        const searchInput = document.getElementById('search-input');
+        if (searchInput) {
+          searchInput.focus();
+        }
+      }, 100);
+    }
+  };
 
   return (
     <nav className="bg-white shadow-lg sticky top-0 z-50">
@@ -58,7 +90,7 @@ const Navbar = () => {
           <div className="hidden md:flex items-center space-x-4">
             {/* Search */}
             <button
-              onClick={() => setIsSearchOpen(!isSearchOpen)}
+              onClick={handleSearchToggle}
               className="p-2 text-gray-700 hover:text-pink-600 transition-colors duration-200"
             >
               <MagnifyingGlassIcon className="h-6 w-6" />
@@ -71,7 +103,7 @@ const Navbar = () => {
             >
               <HeartIcon className="h-6 w-6" />
               <span className="absolute -top-1 -right-1 bg-pink-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
-                0
+                {getWishlistCount()}
               </span>
             </Link>
 
@@ -82,7 +114,7 @@ const Navbar = () => {
             >
               <ShoppingCartIcon className="h-6 w-6" />
               <span className="absolute -top-1 -right-1 bg-pink-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
-                0
+                {getCartCount()}
               </span>
             </Link>
 
@@ -90,15 +122,61 @@ const Navbar = () => {
             {!isLoaded ? (
               <div className="w-8 h-8 bg-gray-200 rounded-full animate-pulse"></div>
             ) : isSignedIn ? (
-              <div className="flex items-center space-x-2">
-                <img
-                  src={user?.imageUrl || '/default-avatar.png'}
-                  alt="Profile"
-                  className="w-8 h-8 rounded-full border-2 border-pink-200"
-                />
-                <span className="text-sm font-medium text-gray-700">
-                  {user?.firstName || 'User'}
-                </span>
+              <div className="relative">
+                <button
+                  onClick={() => setIsProfileDropdownOpen(!isProfileDropdownOpen)}
+                  className="flex items-center space-x-2 p-2 rounded-lg hover:bg-gray-50 transition-colors duration-200"
+                >
+                  <div className="w-8 h-8 bg-pink-500 rounded-full flex items-center justify-center">
+                    <span className="text-white text-sm font-medium">
+                      {user?.firstName?.charAt(0) || user?.email?.charAt(0) || 'U'}
+                    </span>
+                  </div>
+                  <span className="text-sm font-medium text-gray-700">
+                    {user?.firstName || user?.email?.split('@')[0] || 'User'}
+                  </span>
+                  <ChevronDownIcon className="h-4 w-4 text-gray-400" />
+                </button>
+
+                {/* Profile Dropdown */}
+                {isProfileDropdownOpen && (
+                  <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-50 border border-gray-200">
+                    <Link
+                      to="/profile"
+                      className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 flex items-center"
+                      onClick={() => setIsProfileDropdownOpen(false)}
+                    >
+                      <UserIcon className="h-4 w-4 mr-2" />
+                      My Profile
+                    </Link>
+                    <Link
+                      to="/profile?tab=orders"
+                      className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 flex items-center"
+                      onClick={() => setIsProfileDropdownOpen(false)}
+                    >
+                      <ShoppingCartIcon className="h-4 w-4 mr-2" />
+                      My Orders
+                    </Link>
+                    <Link
+                      to="/profile?tab=wishlist"
+                      className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 flex items-center"
+                      onClick={() => setIsProfileDropdownOpen(false)}
+                    >
+                      <HeartIcon className="h-4 w-4 mr-2" />
+                      Wishlist
+                    </Link>
+                    <div className="border-t border-gray-200 my-1"></div>
+                    <button
+                      onClick={() => {
+                        logout();
+                        setIsProfileDropdownOpen(false);
+                      }}
+                      className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
+                    >
+                      Sign Out
+                    </button>
+                  </div>
+                )}
               </div>
             ) : (
               <div className="flex items-center space-x-2">
@@ -130,14 +208,23 @@ const Navbar = () => {
         {/* Search bar */}
         {isSearchOpen && (
           <div className="pb-4 animate-fade-in">
-            <div className="relative">
+            <form onSubmit={handleSearch} className="relative">
               <input
+                id="search-input"
                 type="text"
+                value={searchQuery}
+                onChange={handleSearchInputChange}
                 placeholder="Search for jewelry..."
-                className="w-full px-4 py-3 pl-10 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent"
+                className="w-full px-4 py-3 pl-10 pr-12 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent"
               />
               <MagnifyingGlassIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
-            </div>
+              <button
+                type="submit"
+                className="absolute right-3 top-1/2 transform -translate-y-1/2 text-pink-600 hover:text-pink-700 font-medium"
+              >
+                Search
+              </button>
+            </form>
           </div>
         )}
       </div>
@@ -169,21 +256,33 @@ const Navbar = () => {
                 onClick={() => setIsMenuOpen(false)}
               >
                 <ShoppingCartIcon className="h-6 w-6 mr-2" />
-                Cart (0)
+                Cart ({getCartCount()})
               </Link>
               
               {!isLoaded ? (
                 <div className="w-8 h-8 bg-gray-200 rounded-full animate-pulse"></div>
               ) : isSignedIn ? (
-                <div className="flex items-center">
-                  <img
-                    src={user?.imageUrl || '/default-avatar.png'}
-                    alt="Profile"
-                    className="w-8 h-8 rounded-full border-2 border-pink-200 mr-2"
-                  />
-                  <span className="text-sm font-medium text-gray-700">
-                    {user?.firstName || 'User'}
-                  </span>
+                <div className="flex items-center space-x-2">
+                  <Link
+                    to="/profile"
+                    className="flex items-center text-gray-700 hover:text-pink-600 transition-colors duration-200"
+                    onClick={() => setIsMenuOpen(false)}
+                  >
+                    <div className="w-8 h-8 bg-pink-500 rounded-full flex items-center justify-center mr-2">
+                      <span className="text-white text-sm font-medium">
+                        {user?.firstName?.charAt(0) || user?.email?.charAt(0) || 'U'}
+                      </span>
+                    </div>
+                    <span className="text-sm font-medium text-gray-700">
+                      {user?.firstName || user?.email?.split('@')[0] || 'User'}
+                    </span>
+                  </Link>
+                  <button
+                    onClick={logout}
+                    className="text-sm text-gray-500 hover:text-pink-600 transition-colors"
+                  >
+                    Logout
+                  </button>
                 </div>
               ) : (
                 <Link
