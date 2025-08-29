@@ -279,25 +279,7 @@ const Contact = () => {
           </div>
         </div>
 
-        {/* Map Section */}
-        <div className="mt-16">
-          <div className="bg-white rounded-2xl shadow-card p-8">
-            <h2 className="text-3xl font-jewelry font-bold text-gray-800 mb-6 text-center">
-              Find Our Showroom
-            </h2>
-            <div className="aspect-video bg-gradient-to-br from-pink-100 to-purple-100 rounded-xl flex items-center justify-center">
-              <div className="text-center">
-                <MapPinIcon className="h-16 w-16 text-amber-300 mx-auto mb-4" />
-                <p className="text-gray-600 text-lg">
-                  Google Maps integration will be displayed here
-                </p>
-                <p className="text-gray-500 mt-2">
-                  123 Jewelry Street, Mumbai, Maharashtra 400001
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
+
 
         {/* FAQ Section */}
         <div className="mt-16">

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { 
   ArrowRightIcon, 
   SparklesIcon, 
@@ -7,10 +7,13 @@ import {
   TruckIcon,
   PhoneIcon,
   EnvelopeIcon,
-  MapPinIcon
+  MapPinIcon,
+  GiftIcon,
+  StarIcon
 } from '@heroicons/react/24/outline';
 
 const Home = () => {
+  const navigate = useNavigate();
   const categories = [
     {
       name: 'Rings',
@@ -32,40 +35,119 @@ const Home = () => {
     }
   ];
 
-  return (
+    return (
     <div className="min-h-screen bg-green-900">
       {/* Hero Section */}
       <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
         {/* Background */}
         <div className="absolute inset-0 bg-green-900">
           {/* Background Image */}
-          <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1573408301185-9146fe634ad0?w=1920&h=1080&fit=crop')] bg-cover bg-center opacity-20"></div>
+          <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1573408301185-9146fe634ad0?w=1920&h=1080&fit=crop')] bg-cover bg-center opacity-15"></div>
           {/* Overlay */}
-          <div className="absolute inset-0 bg-gradient-to-br from-green-900/90 via-green-900/80 to-green-900/95"></div>
-          {/* Decorative elements */}
-          <div className="absolute top-20 left-10 w-32 h-32 border border-amber-200/20 rounded-full"></div>
-          <div className="absolute top-40 right-20 w-24 h-24 border border-amber-200/15 rounded-full"></div>
-          <div className="absolute bottom-40 left-20 w-40 h-40 border border-amber-200/10 rounded-full"></div>
-          <div className="absolute bottom-20 right-10 w-28 h-28 border border-amber-200/20 rounded-full"></div>
+          <div className="absolute inset-0 bg-gradient-to-br from-green-900/95 via-green-900/90 to-green-900/95"></div>
+          {/* Decorative Sparkles */}
+          <div className="absolute top-32 left-16 w-4 h-4 bg-amber-200/60 rounded-full animate-pulse"></div>
+          <div className="absolute top-48 right-24 w-3 h-3 bg-amber-200/40 rounded-full animate-pulse delay-1000"></div>
+          <div className="absolute bottom-48 left-32 w-5 h-5 bg-amber-200/50 rounded-full animate-pulse delay-500"></div>
+          <div className="absolute bottom-32 right-16 w-4 h-4 bg-amber-200/70 rounded-full animate-pulse delay-1500"></div>
+          <div className="absolute top-1/2 left-1/4 w-3 h-3 bg-amber-200/30 rounded-full animate-pulse delay-2000"></div>
+          <div className="absolute top-1/3 right-1/3 w-4 h-4 bg-amber-200/45 rounded-full animate-pulse delay-3000"></div>
         </div>
 
         {/* Hero Content */}
         <div className="relative z-10 max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h1 className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-jewelry font-bold text-amber-50 mb-8 leading-tight">
-            We Empower
+          <div className="mb-8">
+            <p className="text-xl sm:text-2xl text-amber-200 font-light tracking-wider mb-4">
+              Premium American Diamond
+            </p>
+          </div>
+          
+          <h1 className="text-6xl sm:text-7xl md:text-8xl lg:text-9xl font-jewelry font-bold text-amber-50 mb-8 leading-tight">
+            SARAM
             <span className="block text-amber-200">
-              Business
+              JEWELS
+            </span>
+            <span className="block text-amber-100">
+              COLLECTION
             </span>
           </h1>
-          
-          <p className="text-xl sm:text-2xl md:text-3xl text-amber-100 mb-12 max-w-4xl mx-auto leading-relaxed font-medium px-4">
-            We're dedicated to helping our clients achieve their goals through exceptional jewelry craftsmanship and timeless design.
+
+          <p className="text-lg sm:text-xl md:text-2xl text-amber-100 mb-12 max-w-3xl mx-auto leading-relaxed font-medium px-4">
+            Discover our stunning collection of anti-tarnish American diamond jewelry at affordable prices
           </p>
-          
-          <div className="flex justify-center">
-            <button className="bg-amber-200 text-green-900 px-8 py-4 rounded-lg font-semibold text-lg hover:bg-amber-300 transition-all duration-300 shadow-lg hover:shadow-xl">
-              Learn More
+
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <button 
+              onClick={() => navigate('/products')}
+              className="bg-amber-200 text-green-900 px-8 py-4 rounded-lg font-semibold text-lg hover:bg-amber-300 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105 cursor-pointer"
+            >
+              Shop Now
             </button>
+            <button 
+              onClick={() => navigate('/categories')}
+              className="border-2 border-amber-200 text-amber-200 px-8 py-4 rounded-lg font-semibold text-lg hover:bg-amber-200 hover:text-green-900 transition-all duration-300 cursor-pointer"
+            >
+              Explore Collections
+            </button>
+          </div>
+        </div>
+      </section>
+
+      {/* About Section */}
+      <section className="py-20 md:py-32 bg-gradient-to-br from-green-800 to-green-900">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+            {/* About Content */}
+            <div className="space-y-8">
+              <div>
+                <h2 className="text-4xl md:text-5xl font-jewelry font-bold text-amber-50 mb-6">
+                  Our Story
+                </h2>
+                <div className="w-20 h-1 bg-amber-300 mb-8"></div>
+              </div>
+              
+              <div className="space-y-6">
+                <p className="text-lg text-amber-100 leading-relaxed">
+                  At <span className="text-amber-200 font-semibold">Saram Jewels</span>, we believe that every woman deserves to feel beautiful and confident. Our journey began with a simple vision: to create stunning jewelry that combines the brilliance of diamonds with the affordability that makes luxury accessible to everyone.
+                </p>
+                
+                <p className="text-lg text-amber-100 leading-relaxed">
+                  We specialize in <span className="text-amber-200 font-semibold">American Diamond jewelry</span> - the perfect blend of elegance and practicality. Our pieces are crafted with precision, featuring anti-tarnish technology that ensures your jewelry maintains its sparkle for years to come.
+                </p>
+                
+                <p className="text-lg text-amber-100 leading-relaxed">
+                  From delicate rings to statement necklaces, each piece in our collection is designed to celebrate your unique style and tell your personal story. We're not just selling jewelry; we're creating memories that last a lifetime.
+                </p>
+              </div>
+
+              <div className="grid grid-cols-3 gap-8 pt-8">
+                <div className="text-center">
+                  <div className="text-3xl font-bold text-amber-200 mb-2">500+</div>
+                  <div className="text-amber-100 text-sm">Happy Customers</div>
+                </div>
+                <div className="text-center">
+                  <div className="text-3xl font-bold text-amber-200 mb-2">1000+</div>
+                  <div className="text-amber-100 text-sm">Jewelry Pieces</div>
+                </div>
+                <div className="text-center">
+                  <div className="text-3xl font-bold text-amber-200 mb-2">5+</div>
+                  <div className="text-amber-100 text-sm">Years Experience</div>
+                </div>
+              </div>
+            </div>
+
+            {/* About Image */}
+            <div className="relative">
+              <div className="aspect-square bg-gradient-to-br from-amber-200 to-amber-300 rounded-2xl p-8 shadow-2xl">
+                <div className="w-full h-full bg-[url('https://images.unsplash.com/photo-1573408301185-9146fe634ad0?w=600&h=600&fit=crop')] bg-cover bg-center rounded-xl"></div>
+              </div>
+              <div className="absolute -top-6 -right-6 w-24 h-24 bg-amber-200 rounded-full flex items-center justify-center shadow-lg">
+                <SparklesIcon className="h-12 w-12 text-green-900" />
+              </div>
+              <div className="absolute -bottom-6 -left-6 w-20 h-20 bg-amber-300 rounded-full flex items-center justify-center shadow-lg">
+                <StarIcon className="h-10 w-10 text-green-900" />
+              </div>
+            </div>
           </div>
         </div>
       </section>
@@ -74,39 +156,39 @@ const Home = () => {
       <section className="py-20 md:py-32 bg-green-900">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-12 md:gap-16">
-            <div className="text-center">
-              <div className="w-24 h-24 bg-amber-200 rounded-full flex items-center justify-center mx-auto mb-8">
-                <SparklesIcon className="h-12 w-12 text-green-900" />
+            <div className="text-center group">
+              <div className="w-20 h-20 bg-gradient-to-br from-amber-200 to-amber-300 rounded-full flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform duration-300 shadow-lg">
+                <SparklesIcon className="h-10 w-10 text-green-900" />
               </div>
-              <h3 className="text-2xl font-jewelry font-bold text-amber-50 mb-4">
-                Proven Track Record
+              <h3 className="text-xl font-jewelry font-bold text-amber-50 mb-3 uppercase tracking-wider">
+                Premium Quality
               </h3>
-              <p className="text-amber-100 leading-relaxed text-lg">
-                Decades of experience in creating exceptional jewelry pieces that stand the test of time and exceed expectations.
+              <p className="text-amber-100 leading-relaxed text-base">
+                Anti-tarnish American Diamond
               </p>
             </div>
-
-            <div className="text-center">
-              <div className="w-24 h-24 bg-amber-200 rounded-full flex items-center justify-center mx-auto mb-8">
-                <ShieldCheckIcon className="h-12 w-12 text-green-900" />
+            
+            <div className="text-center group">
+              <div className="w-20 h-20 bg-gradient-to-br from-amber-200 to-amber-300 rounded-full flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform duration-300 shadow-lg">
+                <TruckIcon className="h-10 w-10 text-green-900" />
               </div>
-              <h3 className="text-2xl font-jewelry font-bold text-amber-50 mb-4">
-                Forward-Thinking Approach
+              <h3 className="text-xl font-jewelry font-bold text-amber-50 mb-3 uppercase tracking-wider">
+                Complimentary Shipping
               </h3>
-              <p className="text-amber-100 leading-relaxed text-lg">
-                We combine traditional craftsmanship with innovative techniques to create jewelry that's both timeless and contemporary.
+              <p className="text-amber-100 leading-relaxed text-base">
+                Free Shipping on orders
               </p>
             </div>
-
-            <div className="text-center">
-              <div className="w-24 h-24 bg-amber-200 rounded-full flex items-center justify-center mx-auto mb-8">
-                <TruckIcon className="h-12 w-12 text-green-900" />
+            
+            <div className="text-center group">
+              <div className="w-20 h-20 bg-gradient-to-br from-amber-200 to-amber-300 rounded-full flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform duration-300 shadow-lg">
+                <GiftIcon className="h-10 w-10 text-green-900" />
               </div>
-              <h3 className="text-2xl font-jewelry font-bold text-amber-50 mb-4">
-                Trusted Partnership
+              <h3 className="text-xl font-jewelry font-bold text-amber-50 mb-3 uppercase tracking-wider">
+                Free Gift Wrapping
               </h3>
-              <p className="text-amber-100 leading-relaxed text-lg">
-                Building lasting relationships with our clients through transparency, quality, and exceptional service.
+              <p className="text-amber-100 leading-relaxed text-base">
+                Free gift wrapping on all orders
               </p>
             </div>
           </div>
@@ -114,14 +196,15 @@ const Home = () => {
       </section>
 
       {/* Categories Preview */}
-      <section className="py-20 md:py-32 bg-green-900">
+      {/* Collections Section */}
+      <section className="py-20 md:py-32 bg-gradient-to-br from-amber-50 to-amber-100">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-20">
-            <h2 className="text-4xl sm:text-5xl md:text-6xl font-jewelry font-bold text-amber-50 mb-6">
-              Our Collections
+          <div className="text-center mb-16">
+            <h2 className="text-4xl sm:text-5xl md:text-6xl font-jewelry font-bold text-green-900 mb-6">
+              OUR COLLECTIONS
             </h2>
-            <p className="text-xl sm:text-2xl text-amber-100 max-w-3xl mx-auto px-4">
-              Discover our curated selection of timeless jewelry pieces
+            <p className="text-xl sm:text-2xl text-green-800 max-w-3xl mx-auto px-4">
+              Find the Perfect Piece For You
             </p>
           </div>
 
@@ -130,7 +213,7 @@ const Home = () => {
               <Link
                 key={index}
                 to={category.href}
-                className="group relative overflow-hidden rounded-xl bg-green-800 shadow-xl transition-all duration-300 hover:shadow-2xl hover:-translate-y-2 border border-green-700"
+                className="group relative overflow-hidden rounded-xl bg-white shadow-xl transition-all duration-300 hover:shadow-2xl hover:-translate-y-2 border border-amber-200 cursor-pointer"
               >
                 <div className="aspect-square overflow-hidden">
                   <img
@@ -138,11 +221,11 @@ const Home = () => {
                     alt={category.name}
                     className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-green-900/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                  <div className="absolute inset-0 bg-gradient-to-t from-green-900/20 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                 </div>
-                <div className="p-8 text-center">
-                  <h3 className="text-2xl font-jewelry font-bold text-amber-50 mb-3">{category.name}</h3>
-                  <p className="text-amber-100 text-lg">{category.price}</p>
+                <div className="p-6 text-center">
+                  <h3 className="text-xl font-jewelry font-bold text-green-900 mb-2">{category.name}</h3>
+                  <p className="text-green-800 text-base">{category.price}</p>
                 </div>
               </Link>
             ))}
@@ -151,13 +234,22 @@ const Home = () => {
       </section>
 
       {/* Footer */}
-      <footer className="bg-green-950 py-12">
+      <footer className="bg-green-900 py-12">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col md:flex-row justify-between items-center">
-            <div className="text-amber-100 text-sm">
-              © 2024 Saram Jewels. All Rights Reserved.
+            <div className="flex items-center mb-4 md:mb-0">
+              <div className="w-12 h-12 bg-amber-200 rounded-full flex items-center justify-center mr-4">
+                <span className="text-green-900 font-bold text-lg">S</span>
+              </div>
+              <div>
+                <div className="text-amber-100 font-semibold text-lg">SARAM</div>
+                <div className="text-amber-200 text-sm">American Diamond • Anti-Tarnish • Affordable</div>
+              </div>
             </div>
-            <div className="flex space-x-6 mt-4 md:mt-0">
+            <div className="text-amber-100 text-sm mb-4 md:mb-0">
+              © 2025. All Rights Reserved.
+            </div>
+            <div className="flex space-x-6">
               <a href="#" className="text-amber-200 hover:text-amber-300 transition-colors">
                 <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
                   <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>

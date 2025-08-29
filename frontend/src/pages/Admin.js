@@ -34,6 +34,8 @@ const Admin = () => {
   const [selectedImage, setSelectedImage] = useState(null);
   const [imagePreview, setImagePreview] = useState(null);
   const [zoomedImage, setZoomedImage] = useState(null);
+  const [productImages, setProductImages] = useState([]);
+  const [selectedImages, setSelectedImages] = useState([]);
   const [notifications, setNotifications] = useState({
     email: true,
     push: true,
@@ -242,6 +244,45 @@ const Admin = () => {
   const handleImageUrlInput = (url) => {
     setImagePreview(url);
     setSelectedImage(null);
+  };
+
+  // Multiple Image Handling Functions
+  const handleMultipleImageUpload = (event) => {
+    const files = Array.from(event.target.files);
+    const newImages = files.map(file => ({
+      id: Date.now() + Math.random(),
+      file: file,
+      url: URL.createObjectURL(file),
+      name: file.name
+    }));
+    setSelectedImages(prev => [...prev, ...newImages]);
+  };
+
+  const handleMultipleImageUrlInput = (urls) => {
+    const urlArray = urls.split('\n').filter(url => url.trim());
+    const newImages = urlArray.map(url => ({
+      id: Date.now() + Math.random(),
+      url: url.trim(),
+      name: `Image ${Date.now()}`
+    }));
+    setProductImages(prev => [...prev, ...newImages]);
+  };
+
+  const removeImage = (imageId, isSelected = false) => {
+    if (isSelected) {
+      setSelectedImages(prev => prev.filter(img => img.id !== imageId));
+    } else {
+      setProductImages(prev => prev.filter(img => img.id !== imageId));
+    }
+  };
+
+  const reorderImages = (fromIndex, toIndex) => {
+    setProductImages(prev => {
+      const newImages = [...prev];
+      const [movedImage] = newImages.splice(fromIndex, 1);
+      newImages.splice(toIndex, 0, movedImage);
+      return newImages;
+    });
   };
 
   // Notification Functions
@@ -810,6 +851,14 @@ const Admin = () => {
           <form onSubmit={(e) => {
             e.preventDefault();
             const formData = new FormData(e.target);
+            
+            // Combine all images (main image + additional images)
+            const allImages = [
+              imagePreview || formData.get('image') || 'https://images.unsplash.com/photo-1605100804763-247f67b3557e?w=600&h=600&fit=crop',
+              ...selectedImages.map(img => img.url),
+              ...productImages.map(img => img.url)
+            ].filter(Boolean);
+            
             const productData = {
               name: formData.get('name'),
               category: formData.get('category'),
@@ -817,7 +866,8 @@ const Admin = () => {
               originalPrice: parseFloat(formData.get('originalPrice')),
               stock: parseInt(formData.get('stock')),
               sku: formData.get('sku'),
-              image: imagePreview || formData.get('image') || 'https://images.unsplash.com/photo-1605100804763-247f67b3557e?w=600&h=600&fit=crop'
+              image: allImages[0] || 'https://images.unsplash.com/photo-1605100804763-247f67b3557e?w=600&h=600&fit=crop',
+              images: allImages // Store all images for the product
             };
             
             if (editingProduct) {
@@ -829,6 +879,8 @@ const Admin = () => {
             // Reset image states
             setSelectedImage(null);
             setImagePreview(null);
+            setSelectedImages([]);
+            setProductImages([]);
           }}>
             <div className="grid grid-cols-2 gap-4">
               <div>
@@ -977,6 +1029,94 @@ const Admin = () => {
                   )}
                 </div>
               </div>
+
+              {/* Multiple Product Images Section */}
+              <div className="col-span-2">
+                <label className="block text-sm font-medium text-gray-700 mb-1">Additional Product Images</label>
+                <p className="text-sm text-gray-500 mb-4">Add multiple images to showcase your product from different angles</p>
+                
+                {/* Multiple Image Upload Options */}
+                <div className="space-y-4">
+                  {/* Multiple URL Input */}
+                  <div>
+                    <label className="block text-sm font-medium text-gray-600 mb-1">Image URLs (one per line)</label>
+                    <textarea
+                      name="additionalImages"
+                      placeholder="https://example.com/image1.jpg&#10;https://example.com/image2.jpg&#10;https://example.com/image3.jpg"
+                      rows="3"
+                      onChange={(e) => handleMultipleImageUrlInput(e.target.value)}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500 resize-none"
+                    />
+                  </div>
+                  
+                  {/* Multiple File Upload */}
+                  <div>
+                    <label className="block text-sm font-medium text-gray-600 mb-2">Upload Multiple Images</label>
+                    <label className="flex items-center justify-center w-full h-32 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:border-pink-500 transition-colors">
+                      <div className="text-center">
+                        <svg className="w-8 h-8 mx-auto text-gray-400 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+                        </svg>
+                        <p className="text-sm text-gray-600">Click to upload multiple images</p>
+                        <p className="text-xs text-gray-500">PNG, JPG, JPEG up to 10MB each</p>
+                      </div>
+                      <input
+                        type="file"
+                        multiple
+                        accept="image/*"
+                        onChange={handleMultipleImageUpload}
+                        className="hidden"
+                      />
+                    </label>
+                  </div>
+
+                  {/* Selected Images Preview */}
+                  {(selectedImages.length > 0 || productImages.length > 0) && (
+                    <div className="space-y-3">
+                      <h4 className="text-sm font-medium text-gray-700">Selected Images ({selectedImages.length + productImages.length})</h4>
+                      
+                      {/* Selected Images Grid */}
+                      <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                        {selectedImages.map((image, index) => (
+                          <div key={image.id} className="relative group">
+                            <img
+                              src={image.url}
+                              alt={image.name}
+                              className="w-full h-24 object-cover rounded-lg border border-gray-300"
+                            />
+                            <button
+                              type="button"
+                              onClick={() => removeImage(image.id, true)}
+                              className="absolute top-1 right-1 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
+                            >
+                              ×
+                            </button>
+                            <div className="text-xs text-gray-500 mt-1 truncate">{image.name}</div>
+                          </div>
+                        ))}
+                        
+                        {productImages.map((image, index) => (
+                          <div key={image.id} className="relative group">
+                            <img
+                              src={image.url}
+                              alt={image.name}
+                              className="w-full h-24 object-cover rounded-lg border border-gray-300"
+                            />
+                            <button
+                              type="button"
+                              onClick={() => removeImage(image.id, false)}
+                              className="absolute top-1 right-1 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
+                            >
+                              ×
+                            </button>
+                            <div className="text-xs text-gray-500 mt-1 truncate">{image.name}</div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </div>
             </div>
             
             <div className="flex justify-end space-x-3 mt-6">
@@ -987,6 +1127,8 @@ const Admin = () => {
                   setEditingProduct(null);
                   setSelectedImage(null);
                   setImagePreview(null);
+                  setSelectedImages([]);
+                  setProductImages([]);
                 }}
                 className="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50"
               >
