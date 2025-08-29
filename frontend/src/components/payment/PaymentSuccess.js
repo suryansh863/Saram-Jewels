@@ -151,8 +151,8 @@ const PaymentSuccess = ({ paymentDetails }) => {
         <div className="mt-6 pt-6 border-t border-gray-200">
           <p className="text-xs text-gray-500">
             Need help? Contact us at{' '}
-            <a href="mailto:support@saramjewels.com" className="text-pink-600 hover:text-pink-500">
-              support@saramjewels.com
+                            <a href="mailto:saramjewels@gmail.com" className="text-pink-600 hover:text-pink-500">
+                  saramjewels@gmail.com
             </a>
           </p>
         </div>

@@ -29,18 +29,35 @@ const Contact = () => {
     e.preventDefault();
     setIsSubmitting(true);
     
-    // Simulate form submission
-    setTimeout(() => {
-      alert('Thank you for your message! We will get back to you soon.');
-      setFormData({
-        name: '',
-        email: '',
-        phone: '',
-        subject: '',
-        message: ''
+    try {
+      const response = await fetch('/api/contact', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData)
       });
+
+      const result = await response.json();
+
+      if (result.success) {
+        alert('Thank you for your message! We will get back to you soon.');
+        setFormData({
+          name: '',
+          email: '',
+          phone: '',
+          subject: '',
+          message: ''
+        });
+      } else {
+        alert(result.message || 'Failed to send message. Please try again.');
+      }
+    } catch (error) {
+      console.error('Error sending message:', error);
+      alert('An error occurred while sending your message. Please try again.');
+    } finally {
       setIsSubmitting(false);
-    }, 2000);
+    }
   };
 
   const contactInfo = [
@@ -53,7 +70,7 @@ const Contact = () => {
     {
       icon: EnvelopeIcon,
       title: 'Email',
-      details: ['info@saramjewelry.com', 'support@saramjewelry.com'],
+      details: ['saramjewels@gmail.com'],
       description: 'Send us an email anytime'
     },
     {
