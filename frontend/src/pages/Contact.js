@@ -71,36 +71,41 @@ const Contact = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-green-900">
       {/* Hero Section */}
-      <section className="bg-gradient-to-r from-pink-500 to-purple-600 text-white py-16">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <section className="relative py-20 md:py-32">
+        {/* Background Image */}
+        <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1573408301185-9146fe634ad0?w=1920&h=1080&fit=crop')] bg-cover bg-center opacity-15"></div>
+        {/* Overlay */}
+        <div className="absolute inset-0 bg-gradient-to-br from-green-900/95 via-green-900/90 to-green-900/95"></div>
+        
+        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center">
-            <h1 className="text-4xl md:text-5xl font-jewelry font-bold mb-6">
+            <h1 className="text-5xl md:text-6xl font-jewelry font-bold text-amber-50 mb-8">
               Get in Touch
             </h1>
-            <p className="text-xl md:text-2xl mb-8 max-w-3xl mx-auto">
+            <p className="text-xl md:text-2xl text-amber-100 mb-8 max-w-3xl mx-auto">
               Have questions about our jewelry? We'd love to hear from you.
             </p>
-            <p className="text-lg max-w-2xl mx-auto">
+            <p className="text-lg text-amber-100 max-w-2xl mx-auto">
               Send us a message and we'll respond as soon as possible.
             </p>
           </div>
         </div>
       </section>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-16">
           {/* Contact Form */}
-          <div className="bg-white rounded-2xl shadow-card p-8">
-            <h2 className="text-3xl font-jewelry font-bold text-gray-800 mb-6">
+          <div className="bg-green-800 rounded-2xl shadow-xl p-8 border border-green-700">
+            <h2 className="text-3xl font-jewelry font-bold text-amber-50 mb-6">
               Send us a Message
             </h2>
             
             <form onSubmit={handleSubmit} className="space-y-6">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
-                  <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-2">
+                  <label htmlFor="name" className="block text-sm font-medium text-amber-100 mb-2">
                     Full Name *
                   </label>
                   <input
@@ -110,13 +115,13 @@ const Contact = () => {
                     value={formData.name}
                     onChange={handleChange}
                     required
-                    className="input-field"
+                    className="w-full px-4 py-3 border border-green-600 rounded-lg bg-green-700 text-amber-50 placeholder-amber-200 focus:ring-2 focus:ring-amber-300 focus:border-transparent"
                     placeholder="Enter your full name"
                   />
                 </div>
                 
                 <div>
-                  <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
+                  <label htmlFor="email" className="block text-sm font-medium text-amber-100 mb-2">
                     Email Address *
                   </label>
                   <input
@@ -126,7 +131,7 @@ const Contact = () => {
                     value={formData.email}
                     onChange={handleChange}
                     required
-                    className="input-field"
+                    className="w-full px-4 py-3 border border-green-600 rounded-lg bg-green-700 text-amber-50 placeholder-amber-200 focus:ring-2 focus:ring-amber-300 focus:border-transparent"
                     placeholder="Enter your email"
                   />
                 </div>
@@ -134,7 +139,7 @@ const Contact = () => {
               
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
-                  <label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-2">
+                  <label htmlFor="phone" className="block text-sm font-medium text-amber-100 mb-2">
                     Phone Number
                   </label>
                   <input
@@ -143,13 +148,13 @@ const Contact = () => {
                     name="phone"
                     value={formData.phone}
                     onChange={handleChange}
-                    className="input-field"
+                    className="w-full px-4 py-3 border border-green-600 rounded-lg bg-green-700 text-amber-50 placeholder-amber-200 focus:ring-2 focus:ring-amber-300 focus:border-transparent"
                     placeholder="Enter your phone number"
                   />
                 </div>
                 
                 <div>
-                  <label htmlFor="subject" className="block text-sm font-medium text-gray-700 mb-2">
+                  <label htmlFor="subject" className="block text-sm font-medium text-amber-100 mb-2">
                     Subject *
                   </label>
                   <select
@@ -158,7 +163,7 @@ const Contact = () => {
                     value={formData.subject}
                     onChange={handleChange}
                     required
-                    className="input-field"
+                    className="w-full px-4 py-3 border border-green-600 rounded-lg bg-green-700 text-amber-50 focus:ring-2 focus:ring-amber-300 focus:border-transparent"
                   >
                     <option value="">Select a subject</option>
                     <option value="general">General Inquiry</option>
@@ -172,7 +177,7 @@ const Contact = () => {
               </div>
               
               <div>
-                <label htmlFor="message" className="block text-sm font-medium text-gray-700 mb-2">
+                <label htmlFor="message" className="block text-sm font-medium text-amber-100 mb-2">
                   Message *
                 </label>
                 <textarea
@@ -182,7 +187,7 @@ const Contact = () => {
                   onChange={handleChange}
                   required
                   rows={6}
-                  className="input-field resize-none"
+                  className="w-full px-4 py-3 border border-green-600 rounded-lg bg-green-700 text-amber-50 placeholder-amber-200 focus:ring-2 focus:ring-amber-300 focus:border-transparent resize-none"
                   placeholder="Tell us how we can help you..."
                 ></textarea>
               </div>
@@ -190,7 +195,7 @@ const Contact = () => {
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className="w-full btn-primary disabled:opacity-50 disabled:cursor-not-allowed"
+                className="w-full bg-amber-200 text-green-900 px-6 py-3 rounded-lg font-semibold hover:bg-amber-300 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {isSubmitting ? (
                   <div className="flex items-center justify-center">
@@ -207,10 +212,10 @@ const Contact = () => {
           {/* Contact Information */}
           <div className="space-y-8">
             <div>
-              <h2 className="text-3xl font-jewelry font-bold text-gray-800 mb-6">
+              <h2 className="text-3xl font-jewelry font-bold text-amber-50 mb-6">
                 Contact Information
               </h2>
-              <p className="text-gray-600 mb-8">
+              <p className="text-amber-100 mb-8">
                 We're here to help and answer any questions you might have. 
                 We look forward to hearing from you.
               </p>
@@ -218,24 +223,24 @@ const Contact = () => {
 
             <div className="space-y-6">
               {contactInfo.map((info, index) => (
-                <div key={index} className="flex items-start space-x-4 p-6 bg-white rounded-xl shadow-card">
+                <div key={index} className="flex items-start space-x-4 p-6 bg-green-800 rounded-xl shadow-xl border border-green-700">
                   <div className="flex-shrink-0">
-                    <div className="w-12 h-12 bg-gradient-to-r from-pink-500 to-purple-600 rounded-lg flex items-center justify-center">
-                      <info.icon className="h-6 w-6 text-white" />
+                    <div className="w-12 h-12 bg-gradient-to-r from-amber-200 to-amber-300 rounded-lg flex items-center justify-center">
+                      <info.icon className="h-6 w-6 text-green-900" />
                     </div>
                   </div>
                   <div>
-                    <h3 className="text-lg font-semibold text-gray-800 mb-2">
+                    <h3 className="text-lg font-semibold text-amber-50 mb-2">
                       {info.title}
                     </h3>
                     <div className="space-y-1">
                       {info.details.map((detail, idx) => (
-                        <p key={idx} className="text-gray-600">
+                        <p key={idx} className="text-amber-100">
                           {detail}
                         </p>
                       ))}
                     </div>
-                    <p className="text-sm text-gray-500 mt-2">
+                    <p className="text-sm text-amber-200 mt-2">
                       {info.description}
                     </p>
                   </div>
@@ -244,7 +249,7 @@ const Contact = () => {
             </div>
 
             {/* Social Media & WhatsApp */}
-            <div className="bg-gradient-to-r from-pink-500 to-purple-600 rounded-2xl p-8 text-white">
+                          <div className="bg-gradient-to-r from-amber-300 to-amber-400 rounded-2xl p-8 text-green-900">
               <h3 className="text-2xl font-jewelry font-bold mb-4">
                 Connect With Us
               </h3>
@@ -282,7 +287,7 @@ const Contact = () => {
             </h2>
             <div className="aspect-video bg-gradient-to-br from-pink-100 to-purple-100 rounded-xl flex items-center justify-center">
               <div className="text-center">
-                <MapPinIcon className="h-16 w-16 text-pink-500 mx-auto mb-4" />
+                <MapPinIcon className="h-16 w-16 text-amber-300 mx-auto mb-4" />
                 <p className="text-gray-600 text-lg">
                   Google Maps integration will be displayed here
                 </p>

@@ -1,18 +1,27 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { useClerk, useUser } from '@clerk/clerk-react';
 
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
-  const { user, isLoaded, isSignedIn } = useUser();
-  const { signIn, signUp } = useClerk();
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
+  const [clerkAvailable, setClerkAvailable] = useState(false);
+  const [user, setUser] = useState(null);
+  const [isSignedIn, setIsSignedIn] = useState(false);
+  
+  // Mock authentication for testing
+  const mockUser = {
+    email: 'suryanshsingh892@gmail.com',
+    firstName: 'Suryansh',
+    lastName: 'Singh'
+  };
+
+
 
   useEffect(() => {
-    if (isLoaded) {
-      setIsLoading(false);
-    }
-  }, [isLoaded]);
+    // For mock authentication, set loading to false immediately
+    setIsLoading(false);
+    setClerkAvailable(false);
+  }, []);
 
   // Password validation function
   const validatePassword = (password) => {
@@ -46,15 +55,13 @@ export const AuthProvider = ({ children }) => {
 
   const login = async (email, password) => {
     try {
-      const result = await signIn.authenticateWithPassword({
-        identifier: email,
-        password: password,
-      });
-      
-      if (result.status === 'complete') {
+      // Mock login for testing
+      if (email === 'suryanshsingh892@gmail.com' && password === 'Admin123!') {
+        setUser(mockUser);
+        setIsSignedIn(true);
         return { success: true };
       } else {
-        return { success: false, error: 'Authentication failed' };
+        return { success: false, error: 'Invalid email or password' };
       }
     } catch (error) {
       return { success: false, error: error.message || 'Login failed' };
@@ -72,14 +79,10 @@ export const AuthProvider = ({ children }) => {
         };
       }
 
-      const result = await signUp.create({
-        emailAddress: email,
-        password: password,
-        firstName: firstName,
-        lastName: lastName,
-      });
-
-      if (result.status === 'complete') {
+      // Mock signup for testing
+      if (email === 'suryanshsingh892@gmail.com') {
+        setUser({ email, firstName, lastName });
+        setIsSignedIn(true);
         return { success: true };
       } else {
         return { success: false, error: 'Signup failed' };
@@ -115,21 +118,21 @@ export const AuthProvider = ({ children }) => {
 
   const logout = async () => {
     try {
-      if (signIn && typeof signIn.destroy === 'function') {
-        await signIn.destroy();
-      } else {
-        // Fallback logout
-        window.location.href = '/sign-out';
-      }
+      // Mock logout for testing
+      setUser(null);
+      setIsSignedIn(false);
+      window.location.href = '/';
     } catch (error) {
       console.error('Logout error:', error);
+      window.location.href = '/';
     }
   };
 
   const value = {
-    user,
+    user: user || mockUser,
     isSignedIn,
     isLoaded: !isLoading,
+    clerkAvailable,
     login,
     signup,
     loginWithGoogle,

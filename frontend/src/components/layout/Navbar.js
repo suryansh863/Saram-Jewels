@@ -59,12 +59,26 @@ const Navbar = () => {
   };
 
   return (
-    <nav className="bg-white shadow-lg sticky top-0 z-50">
+    <nav className="bg-green-900 shadow-lg sticky top-0 z-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
           <div className="flex-shrink-0">
-            <Logo size="default" showText={true} />
+            <Logo size="default" showText={false} />
+          </div>
+
+          {/* Mobile Navigation Toggle */}
+          <div className="md:hidden">
+            <button
+              onClick={() => setIsMenuOpen(!isMenuOpen)}
+              className="p-2 text-gray-700 hover:text-pink-600 transition-colors duration-200"
+            >
+              {isMenuOpen ? (
+                <XMarkIcon className="h-6 w-6" />
+              ) : (
+                <Bars3Icon className="h-6 w-6" />
+              )}
+            </button>
           </div>
 
           {/* Desktop Navigation */}
@@ -76,8 +90,8 @@ const Navbar = () => {
                   to={item.href}
                   className={`px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200 ${
                     isActive(item.href)
-                      ? 'text-pink-600 bg-pink-50'
-                      : 'text-gray-700 hover:text-pink-600 hover:bg-pink-50'
+                      ? 'text-green-900 bg-amber-200'
+                      : 'text-amber-100 hover:text-amber-200 hover:bg-green-800'
                   }`}
                 >
                   {item.name}
@@ -86,12 +100,68 @@ const Navbar = () => {
             </div>
           </div>
 
-          {/* Right side icons */}
+          {/* Right side icons - Mobile */}
+          <div className="flex md:hidden items-center space-x-2">
+            {/* Search */}
+            <button
+              onClick={handleSearchToggle}
+              className="p-2 text-amber-100 hover:text-amber-200 transition-colors duration-200"
+            >
+              <MagnifyingGlassIcon className="h-5 w-5" />
+            </button>
+
+            {/* Wishlist */}
+            <Link
+              to="/wishlist"
+              className="relative p-2 text-amber-100 hover:text-amber-200 transition-colors duration-200"
+            >
+              <HeartIcon className="h-5 w-5" />
+              {getWishlistCount() > 0 && (
+                <span className="absolute -top-1 -right-1 bg-green-800 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
+                  {getWishlistCount()}
+                </span>
+              )}
+            </Link>
+
+            {/* Cart */}
+            <Link
+              to="/cart"
+              className="relative p-2 text-amber-100 hover:text-amber-200 transition-colors duration-200"
+            >
+              <ShoppingCartIcon className="h-5 w-5" />
+              {getCartCount() > 0 && (
+                <span className="absolute -top-1 -right-1 bg-green-800 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
+                  {getCartCount()}
+                </span>
+              )}
+            </Link>
+
+            {/* User Profile */}
+            {isSignedIn ? (
+              <div className="relative">
+                <button
+                  onClick={() => setIsProfileDropdownOpen(!isProfileDropdownOpen)}
+                  className="p-2 text-amber-100 hover:text-amber-200 transition-colors duration-200"
+                >
+                  <UserIcon className="h-5 w-5" />
+                </button>
+              </div>
+            ) : (
+              <Link
+                to="/login"
+                className="p-2 text-amber-100 hover:text-amber-200 transition-colors duration-200"
+              >
+                <UserIcon className="h-5 w-5" />
+              </Link>
+            )}
+          </div>
+
+          {/* Right side icons - Desktop */}
           <div className="hidden md:flex items-center space-x-4">
             {/* Search */}
             <button
               onClick={handleSearchToggle}
-              className="p-2 text-gray-700 hover:text-pink-600 transition-colors duration-200"
+              className="p-2 text-amber-100 hover:text-amber-200 transition-colors duration-200"
             >
               <MagnifyingGlassIcon className="h-6 w-6" />
             </button>
@@ -99,23 +169,27 @@ const Navbar = () => {
             {/* Wishlist */}
             <Link
               to="/wishlist"
-              className="p-2 text-gray-700 hover:text-pink-600 transition-colors duration-200 relative"
+              className="p-2 text-amber-100 hover:text-amber-200 transition-colors duration-200 relative"
             >
               <HeartIcon className="h-6 w-6" />
-              <span className="absolute -top-1 -right-1 bg-pink-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
-                {getWishlistCount()}
-              </span>
+              {getWishlistCount() > 0 && (
+                <span className="absolute -top-1 -right-1 bg-amber-300 text-green-900 text-xs rounded-full h-5 w-5 flex items-center justify-center font-semibold">
+                  {getWishlistCount()}
+                </span>
+              )}
             </Link>
 
             {/* Cart */}
             <Link
               to="/cart"
-              className="p-2 text-gray-700 hover:text-pink-600 transition-colors duration-200 relative"
+              className="p-2 text-amber-100 hover:text-amber-200 transition-colors duration-200 relative"
             >
               <ShoppingCartIcon className="h-6 w-6" />
-              <span className="absolute -top-1 -right-1 bg-pink-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
-                {getCartCount()}
-              </span>
+              {getCartCount() > 0 && (
+                <span className="absolute -top-1 -right-1 bg-amber-300 text-green-900 text-xs rounded-full h-5 w-5 flex items-center justify-center font-semibold">
+                  {getCartCount()}
+                </span>
+              )}
             </Link>
 
             {/* User/Auth */}
@@ -125,17 +199,17 @@ const Navbar = () => {
               <div className="relative">
                 <button
                   onClick={() => setIsProfileDropdownOpen(!isProfileDropdownOpen)}
-                  className="flex items-center space-x-2 p-2 rounded-lg hover:bg-gray-50 transition-colors duration-200"
+                  className="flex items-center space-x-2 p-2 rounded-lg hover:bg-green-800 transition-colors duration-200"
                 >
-                  <div className="w-8 h-8 bg-pink-500 rounded-full flex items-center justify-center">
-                    <span className="text-white text-sm font-medium">
+                  <div className="w-8 h-8 bg-amber-200 rounded-full flex items-center justify-center">
+                    <span className="text-green-900 text-sm font-medium">
                       {user?.firstName?.charAt(0) || user?.email?.charAt(0) || 'U'}
                     </span>
                   </div>
-                  <span className="text-sm font-medium text-gray-700">
+                  <span className="text-sm font-medium text-amber-100">
                     {user?.firstName || user?.email?.split('@')[0] || 'User'}
                   </span>
-                  <ChevronDownIcon className="h-4 w-4 text-gray-400" />
+                  <ChevronDownIcon className="h-4 w-4 text-amber-200" />
                 </button>
 
                 {/* Profile Dropdown */}
@@ -182,7 +256,7 @@ const Navbar = () => {
               <div className="flex items-center space-x-2">
                 <Link
                   to="/login"
-                  className="text-gray-700 hover:text-pink-600 transition-colors duration-200"
+                  className="text-amber-100 hover:text-amber-200 transition-colors duration-200"
                 >
                   <UserIcon className="h-6 w-6" />
                 </Link>
@@ -194,7 +268,7 @@ const Navbar = () => {
           <div className="md:hidden">
             <button
               onClick={() => setIsMenuOpen(!isMenuOpen)}
-              className="p-2 text-gray-700 hover:text-pink-600 transition-colors duration-200"
+              className="p-2 text-amber-100 hover:text-amber-200 transition-colors duration-200"
             >
               {isMenuOpen ? (
                 <XMarkIcon className="h-6 w-6" />
@@ -215,7 +289,7 @@ const Navbar = () => {
                 value={searchQuery}
                 onChange={handleSearchInputChange}
                 placeholder="Search for jewelry..."
-                className="w-full px-4 py-3 pl-10 pr-12 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent"
+                className="w-full px-4 py-3 pl-10 pr-12 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-300 focus:border-transparent"
               />
               <MagnifyingGlassIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
               <button
@@ -268,8 +342,8 @@ const Navbar = () => {
                     className="flex items-center text-gray-700 hover:text-pink-600 transition-colors duration-200"
                     onClick={() => setIsMenuOpen(false)}
                   >
-                    <div className="w-8 h-8 bg-pink-500 rounded-full flex items-center justify-center mr-2">
-                      <span className="text-white text-sm font-medium">
+                    <div className="w-8 h-8 bg-amber-300 rounded-full flex items-center justify-center mr-2">
+                      <span className="text-green-900 text-sm font-medium">
                         {user?.firstName?.charAt(0) || user?.email?.charAt(0) || 'U'}
                       </span>
                     </div>

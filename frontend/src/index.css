@@ -64,12 +64,12 @@
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #ec4899;
+  background: #14532d;
   border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #be185d;
+  background: #052e16;
 }
 
 /* Line clamp utility */
@@ -96,7 +96,103 @@
 
 /* Custom button styles */
 .btn-primary {
-  @apply bg-gradient-to-r from-pink-600 to-purple-600 text-white px-6 py-3 rounded-lg font-semibold hover:from-pink-700 hover:to-purple-700 transition-all duration-200 shadow-lg hover:shadow-xl;
+  @apply bg-gradient-to-r from-green-900 to-green-800 text-white px-4 sm:px-6 py-2 sm:py-3 rounded-lg font-semibold hover:from-green-950 hover:to-green-900 transition-all duration-200 shadow-lg hover:shadow-xl text-sm sm:text-base;
+}
+
+.btn-secondary {
+  @apply bg-amber-50 text-green-900 px-4 sm:px-6 py-2 sm:py-3 rounded-lg font-semibold border-2 border-green-900 hover:bg-green-900 hover:text-amber-50 transition-all duration-200 shadow-lg hover:shadow-xl text-sm sm:text-base;
+}
+
+/* Global color overrides */
+:root {
+  --primary-green: #14532d;
+  --secondary-green: #166534;
+  --accent-beige: #fef3c7;
+  --light-beige: #fefce8;
+  --dark-green: #052e16;
+}
+
+/* Override Tailwind colors globally */
+.text-green-600, .text-green-700, .text-green-800 {
+  color: var(--primary-green) !important;
+}
+
+.bg-green-600, .bg-green-700, .bg-green-800 {
+  background-color: var(--primary-green) !important;
+}
+
+.border-green-600, .border-green-700, .border-green-800 {
+  border-color: var(--primary-green) !important;
+}
+
+.ring-green-600, .ring-green-700, .ring-green-800 {
+  --tw-ring-color: var(--primary-green) !important;
+}
+
+.hover\:text-green-600:hover, .hover\:text-green-700:hover, .hover\:text-green-800:hover {
+  color: var(--primary-green) !important;
+}
+
+.hover\:bg-green-600:hover, .hover\:bg-green-700:hover, .hover\:bg-green-800:hover {
+  background-color: var(--primary-green) !important;
+}
+
+/* Mobile-first responsive utilities */
+.mobile-container {
+  @apply px-4 sm:px-6 lg:px-8;
+}
+
+.mobile-text {
+  @apply text-sm sm:text-base md:text-lg;
+}
+
+.mobile-heading {
+  @apply text-xl sm:text-2xl md:text-3xl lg:text-4xl;
+}
+
+.mobile-grid {
+  @apply grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4;
+}
+
+.mobile-spacing {
+  @apply space-y-4 sm:space-y-6 md:space-y-8;
+}
+
+.mobile-padding {
+  @apply p-4 sm:p-6 md:p-8;
+}
+
+/* Touch-friendly elements */
+.touch-target {
+  @apply min-h-[44px] min-w-[44px];
+}
+
+/* Mobile navigation */
+.mobile-nav {
+  @apply fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 z-50 lg:hidden;
+}
+
+/* Mobile modal adjustments */
+.mobile-modal {
+  @apply w-full max-w-sm mx-auto sm:max-w-md md:max-w-lg lg:max-w-xl;
+}
+
+/* Mobile table */
+.mobile-table {
+  @apply block w-full overflow-x-auto;
+}
+
+.mobile-table table {
+  @apply min-w-full divide-y divide-gray-200;
+}
+
+/* Mobile form */
+.mobile-form {
+  @apply space-y-4 sm:space-y-6;
+}
+
+.mobile-input {
+  @apply w-full px-3 sm:px-4 py-2 sm:py-3 text-sm sm:text-base;
 }
 
 .btn-secondary {

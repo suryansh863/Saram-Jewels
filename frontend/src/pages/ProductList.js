@@ -11,6 +11,7 @@ import {
   SparklesIcon
 } from '@heroicons/react/24/outline';
 import { useCart } from '../context/CartContext';
+import ImageZoom from '../components/ui/ImageZoom';
 
 const ProductList = () => {
   const [viewMode, setViewMode] = useState('grid');
@@ -266,14 +267,14 @@ const ProductList = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8">
+    <div className="min-h-screen bg-gray-50 py-6 md:py-8">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
-        <div className="mb-8">
-          <h1 className="text-3xl font-jewelry font-bold text-gray-900 mb-2">
+        <div className="mb-6 md:mb-8">
+          <h1 className="text-2xl sm:text-3xl font-jewelry font-bold text-gray-900 mb-2">
             {searchQuery ? `Search Results for "${searchQuery}"` : 'All Products'}
           </h1>
-          <p className="text-gray-600">
+          <p className="text-sm md:text-base text-gray-600">
             {searchQuery 
               ? `Found ${sortedProducts.length} products matching your search`
               : 'Discover our beautiful collection of jewelry'
@@ -282,8 +283,8 @@ const ProductList = () => {
         </div>
 
         {/* Filters and Search */}
-        <div className="bg-white rounded-lg shadow-sm p-6 mb-8">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <div className="bg-white rounded-lg shadow-sm p-4 md:p-6 mb-6 md:mb-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
             {/* Search */}
             <div className="relative">
               <MagnifyingGlassIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
@@ -292,16 +293,16 @@ const ProductList = () => {
                 placeholder="Search products..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent"
+                className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-900 focus:border-transparent"
               />
             </div>
 
-            {/* Category Filter */}
-            <select
-              value={selectedCategory}
-              onChange={(e) => setSelectedCategory(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent"
-            >
+                         {/* Category Filter */}
+             <select
+               value={selectedCategory}
+               onChange={(e) => setSelectedCategory(e.target.value)}
+               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-900 focus:border-transparent"
+             >
               {categories.map(category => (
                 <option key={category.id} value={category.id}>
                   {category.name}
@@ -309,12 +310,12 @@ const ProductList = () => {
               ))}
             </select>
 
-            {/* Price Range Filter */}
-            <select
-              value={priceRange}
-              onChange={(e) => setPriceRange(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent"
-            >
+                         {/* Price Range Filter */}
+             <select
+               value={priceRange}
+               onChange={(e) => setPriceRange(e.target.value)}
+               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-900 focus:border-transparent"
+             >
               {priceRanges.map(range => (
                 <option key={range.id} value={range.id}>
                   {range.name}
@@ -322,12 +323,12 @@ const ProductList = () => {
               ))}
             </select>
 
-            {/* Sort */}
-            <select
-              value={sortBy}
-              onChange={(e) => setSortBy(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent"
-            >
+                         {/* Sort */}
+             <select
+               value={sortBy}
+               onChange={(e) => setSortBy(e.target.value)}
+               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-900 focus:border-transparent"
+             >
               {sortOptions.map(option => (
                 <option key={option.id} value={option.id}>
                   {option.name}
@@ -342,21 +343,21 @@ const ProductList = () => {
           <div className="flex items-center space-x-2">
             <button
               onClick={() => setViewMode('grid')}
-              className={`p-2 rounded-lg transition-colors ${
-                viewMode === 'grid'
-                  ? 'bg-pink-100 text-pink-600'
-                  : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-              }`}
+                              className={`p-2 rounded-lg transition-colors ${
+                  viewMode === 'grid'
+                    ? 'bg-green-100 text-green-900'
+                    : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                }`}
             >
               <Squares2X2Icon className="h-5 w-5" />
             </button>
             <button
               onClick={() => setViewMode('list')}
-              className={`p-2 rounded-lg transition-colors ${
-                viewMode === 'list'
-                  ? 'bg-pink-100 text-pink-600'
-                  : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-              }`}
+                              className={`p-2 rounded-lg transition-colors ${
+                  viewMode === 'list'
+                    ? 'bg-green-100 text-green-900'
+                    : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                }`}
             >
               <ListBulletIcon className="h-5 w-5" />
             </button>
@@ -381,14 +382,14 @@ const ProductList = () => {
             {searchQuery && (
               <button
                 onClick={() => setSearchQuery('')}
-                className="mt-4 inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-pink-600 bg-pink-100 hover:bg-pink-200"
+                className="mt-4 inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-green-900 bg-green-100 hover:bg-green-200"
               >
                 Clear Search
               </button>
             )}
           </div>
         ) : (
-          <div className={`grid gap-6 ${
+          <div className={`grid gap-4 md:gap-6 ${
             viewMode === 'grid' 
               ? 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4' 
               : 'grid-cols-1'
@@ -404,7 +405,7 @@ const ProductList = () => {
                 <div className={`overflow-hidden ${
                   viewMode === 'list' ? 'w-48 h-48' : 'aspect-square'
                 }`}>
-                  <img
+                  <ImageZoom
                     src={product.images[0]}
                     alt={product.name}
                     className="w-full h-full object-cover transition-transform duration-300 hover:scale-110"
@@ -414,7 +415,7 @@ const ProductList = () => {
                 {/* Product Info */}
                 <div className={`p-4 ${viewMode === 'list' ? 'flex-1' : ''}`}>
                   <div className="flex items-start justify-between mb-2">
-                    <h3 className="font-semibold text-gray-800 group-hover:text-pink-600 transition-colors">
+                    <h3 className="font-semibold text-gray-800 group-hover:text-green-700 transition-colors">
                       {product.name}
                     </h3>
                     <button
@@ -478,7 +479,7 @@ const ProductList = () => {
                     </Link>
                     <button
                       onClick={() => handleAddToCart(product)}
-                      className="flex-1 inline-flex items-center justify-center px-3 py-2 bg-pink-600 text-white rounded-lg text-sm font-medium hover:bg-pink-700 transition-colors"
+                      className="flex-1 inline-flex items-center justify-center px-3 py-2 bg-green-900 text-white rounded-lg text-sm font-medium hover:bg-green-950 transition-colors"
                     >
                       <ShoppingCartIcon className="h-4 w-4 mr-1" />
                       Add to Cart

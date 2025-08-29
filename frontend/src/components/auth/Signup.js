@@ -10,7 +10,7 @@ import {
   XMarkIcon
 } from '@heroicons/react/24/outline';
 import { useAuth } from '../../context/AuthContext';
-import { SignUpButton } from '@clerk/clerk-react';
+
 
 const Signup = () => {
   const [formData, setFormData] = useState({
@@ -69,7 +69,12 @@ const Signup = () => {
       );
       
       if (result.success) {
-        navigate('/');
+        // Redirect to admin page if it's the admin user, otherwise go to homepage
+        if (formData.email === 'suryanshsingh892@gmail.com') {
+          navigate('/admin');
+        } else {
+          navigate('/');
+        }
       } else {
         setError(result.error || 'Signup failed. Please try again.');
       }
@@ -405,7 +410,11 @@ const Signup = () => {
 
           {/* Social Signup */}
           <div className="mt-6">
-            <SignUpButton mode="modal" strategy="oauth_google" className="w-full flex justify-center items-center px-4 py-2 border border-gray-300 rounded-lg shadow-sm bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-pink-500">
+            <button
+              type="button"
+              onClick={() => alert('Google signup is not available in demo mode. Please use email/password signup.')}
+              className="w-full flex justify-center items-center px-4 py-2 border border-gray-300 rounded-lg shadow-sm bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-pink-500"
+            >
               <div className="flex items-center">
                 <svg className="w-5 h-5 mr-2" viewBox="0 0 24 24">
                   <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
@@ -415,7 +424,7 @@ const Signup = () => {
                 </svg>
                 Continue with Google
               </div>
-            </SignUpButton>
+            </button>
           </div>
 
           {/* Sign In Link */}

@@ -14,6 +14,7 @@ import {
 } from '@heroicons/react/24/outline';
 import { StarIcon as StarIconSolid, HeartIcon as HeartIconSolid } from '@heroicons/react/24/solid';
 import { useCart } from '../context/CartContext';
+import ImageZoom from '../components/ui/ImageZoom';
 
 const ProductDetail = () => {
   const { id } = useParams();
@@ -263,30 +264,17 @@ const ProductDetail = () => {
           <div className="space-y-4">
             {/* Main Image */}
             <div className="relative aspect-square bg-white rounded-2xl overflow-hidden shadow-lg">
-              <img
+              <ImageZoom
                 src={product.images[selectedImage]}
                 alt={product.name}
-                className="w-full h-full object-cover cursor-zoom-in"
-                onClick={() => setShowZoom(!showZoom)}
-              />
-              {showZoom && (
-                <div className="absolute inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50">
-                  <div className="relative max-w-4xl max-h-full p-4">
-                    <img
-                      src={product.images[selectedImage]}
-                      alt={product.name}
-                      className="w-full h-auto object-contain"
-                    />
-                    <button
-                      onClick={() => setShowZoom(false)}
-                      className="absolute top-2 right-2 text-white hover:text-gray-300"
-                    >
-                      <span className="sr-only">Close zoom</span>
-                      ×
-                    </button>
-                  </div>
-                </div>
-              )}
+                className="w-full h-full object-cover"
+              >
+                <img
+                  src={product.images[selectedImage]}
+                  alt={product.name}
+                  className="w-full h-full object-cover"
+                />
+              </ImageZoom>
               
               {/* Zoom indicator */}
               <div className="absolute bottom-4 right-4 bg-black bg-opacity-50 text-white px-2 py-1 rounded text-sm">
@@ -298,21 +286,45 @@ const ProductDetail = () => {
             {/* Thumbnail Images */}
             <div className="grid grid-cols-4 gap-4">
               {product.images.map((image, index) => (
-                <button
-                  key={index}
-                  onClick={() => setSelectedImage(index)}
-                  className={`aspect-square rounded-lg overflow-hidden border-2 transition-all ${
-                    selectedImage === index
-                      ? 'border-pink-500 shadow-lg'
-                      : 'border-gray-200 hover:border-pink-300'
-                  }`}
-                >
-                  <img
-                    src={image}
-                    alt={`${product.name} ${index + 1}`}
-                    className="w-full h-full object-cover"
-                  />
-                </button>
+                <div key={index} className="relative">
+                  <button
+                    onClick={() => setSelectedImage(index)}
+                    className={`aspect-square rounded-lg overflow-hidden border-2 transition-all w-full ${
+                      selectedImage === index
+                        ? 'border-pink-500 shadow-lg'
+                        : 'border-gray-200 hover:border-pink-300'
+                    }`}
+                  >
+                    <img
+                      src={image}
+                      alt={`${product.name} ${index + 1}`}
+                      className="w-full h-full object-cover"
+                    />
+                  </button>
+                  {/* Zoom button for thumbnails */}
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      // Create a temporary ImageZoom instance
+                      const tempZoom = document.createElement('div');
+                      tempZoom.innerHTML = `
+                        <div class="fixed inset-0 bg-black bg-opacity-90 flex items-center justify-center z-50">
+                          <div class="relative max-w-4xl max-h-[90vh] p-4">
+                            <button class="absolute top-2 right-2 z-10 text-white hover:text-gray-300 text-2xl font-bold bg-black bg-opacity-50 rounded-full w-10 h-10 flex items-center justify-center" onclick="this.parentElement.parentElement.remove()">×</button>
+                            <div class="relative overflow-hidden rounded-lg">
+                              <img src="${image}" alt="${product.name}" class="w-full h-auto max-h-[80vh] object-contain cursor-zoom-in" style="transform: scale(1); transition: transform 0.3s ease;" onmouseenter="this.style.transform='scale(1.5)';this.style.cursor='zoom-out'" onmouseleave="this.style.transform='scale(1)';this.style.cursor='zoom-in'" onwheel="event.preventDefault();const scale=parseFloat(this.style.transform.replace('scale(','').replace(')',''))||1;const newScale=event.deltaY>0?Math.max(0.5,scale-0.1):Math.min(3,scale+0.1);this.style.transform='scale('+newScale+')'">
+                            </div>
+                          </div>
+                        </div>
+                      `;
+                      document.body.appendChild(tempZoom);
+                    }}
+                    className="absolute top-1 right-1 bg-black bg-opacity-50 text-white p-1 rounded-full hover:bg-opacity-75 transition-opacity"
+                    title="Zoom"
+                  >
+                    <EyeIcon className="h-3 w-3" />
+                  </button>
+                </div>
               ))}
             </div>
           </div>

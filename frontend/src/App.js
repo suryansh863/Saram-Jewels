@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
 import { CartProvider } from './context/CartContext';
+import { SiteSettingsProvider } from './context/SiteSettingsContext';
 import Navbar from './components/layout/Navbar';
 import Login from './components/auth/Login';
 import Signup from './components/auth/Signup';
@@ -16,6 +17,7 @@ const Cart = React.lazy(() => import('./pages/Cart'));
 const Wishlist = React.lazy(() => import('./pages/Wishlist'));
 const Contact = React.lazy(() => import('./pages/Contact'));
 const Profile = React.lazy(() => import('./pages/Profile'));
+const Admin = React.lazy(() => import('./pages/Admin'));
 const Payment = React.lazy(() => import('./components/payment/PaymentGateway'));
 
 // Notification Component
@@ -92,12 +94,13 @@ function App() {
   return (
     <AuthProvider>
       <CartProvider>
-        <Router>
+        <SiteSettingsProvider>
+          <Router>
           <div className="min-h-screen bg-gray-50">
             <Navbar />
             <React.Suspense fallback={
               <div className="flex items-center justify-center min-h-screen">
-                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-pink-500"></div>
+                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-amber-300"></div>
               </div>
             }>
               <Routes>
@@ -122,6 +125,11 @@ function App() {
                     <Profile />
                   </ProtectedRoute>
                 } />
+                <Route path="/admin" element={
+                  <ProtectedRoute>
+                    <Admin />
+                  </ProtectedRoute>
+                } />
                 <Route path="/payment" element={
                   <ProtectedRoute>
                     <Payment />
@@ -140,7 +148,8 @@ function App() {
               onClose={closeNotification}
             />
           </div>
-        </Router>
+          </Router>
+        </SiteSettingsProvider>
       </CartProvider>
     </AuthProvider>
   );
